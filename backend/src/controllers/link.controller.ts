@@ -1,5 +1,9 @@
 import { type Request, type Response } from "express";
-import { createLink, getOriginalUrlByCode } from "src/services/link.service";
+import {
+  createLink,
+  deleteLink,
+  getOriginalUrlByCode,
+} from "src/services/link.service";
 
 export async function createLinkController(req: Request, res: Response) {
   try {
@@ -36,5 +40,37 @@ export async function redirectToOriginalUrlController(
     return res.redirect(302, originalUrl);
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+export async function deleteLinkController(req: Request, res: Response) {
+  const user_id = req.body?.user_id;
+  const short_code = req.body?.short_code;
+
+  if (!user_id || !short_code) {
+    return res
+      .status(400)
+      .json({ message: "User Id and short_code are required" });
+  }
+
+  try {
+    await deleteLink(user_id, short_code);
+    return res.json({ message: "Link deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ Error: "Internal server error" });
+  }
+}
+
+export async function getUserLinksController(req: Request, res: Response) {
+  const user_id = req.body?.user_id;
+
+  if (!user_id) {
+    return res.status(400).json({ message: "User Id is required" });
+  }
+
+  try {
+    const allLinks = await getUserLinks(user_id);
+  } catch (error) {
+    return res.status(500).json({ Error: "Internal server error" });
   }
 }
