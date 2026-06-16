@@ -10,6 +10,11 @@
     "target": "ES2023", // Slightly upgraded for better native modern JS support
     "types": ["node"],
 
+    "baseUrl": ".",
+    "paths": {
+      "@prisma/client": ["./generated/prisma"]
+    },
+
     /* Other Outputs */
     "sourceMap": true,
     "declaration": true,
@@ -27,12 +32,13 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "6.0"
   },
   "exclude": [
     "node_modules",
     "dist",
     "*.config.ts", // <-- This tells TS to ignore any config files in the root
-    "prisma" // <-- This tells TS to ignore the prisma folder
+    "prisma", // <-- This tells TS to ignore the prisma folder
+    "src/generated/"
   ]
 }
