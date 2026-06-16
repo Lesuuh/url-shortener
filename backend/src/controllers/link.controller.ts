@@ -3,6 +3,7 @@ import {
   createLink,
   deleteLink,
   getOriginalUrlByCode,
+  getUserLinks,
 } from "src/services/link.service";
 
 export async function createLinkController(req: Request, res: Response) {

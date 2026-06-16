@@ -1,6 +1,8 @@
 import { Router } from "express";
 import {
   createLinkController,
+  deleteLinkController,
+  getUserLinksController,
   redirectToOriginalUrlController,
 } from "src/controllers/link.controller";
 
@@ -15,5 +17,10 @@ router.post("/", createLinkController);
 
 // redirect to original url
 router.get("/r/:code", redirectToOriginalUrlController);
+
+// delete link
+router.post("/delete", deleteLinkController);
+
+router.get("/user/:user_id", getUserLinksController);
 
 export default router;
