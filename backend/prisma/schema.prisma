@@ -14,17 +14,22 @@ datasource db {
 
 model User {
   id            String   @id @default(cuid())
+  name          String?
   email         String   @unique
   password_hash String
   createdAt     DateTime @default(now())
+
+  links Links[]
 }
 
 model Links {
   id           String    @id @default(cuid())
-  short_code   String
+  short_code   String    @unique
   original_url String
   user_id      String
-  custom_alias String?
+  custom_alias String?   @unique
   expires_at   DateTime?
   createdAt    DateTime  @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
 }
