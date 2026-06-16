@@ -16,7 +16,7 @@ export async function createLinkController(req: Request, res: Response) {
     const link = await createLink(url, userId);
     return res.json({ link });
   } catch (error) {
-    res.status(500).json({ message: "Error creating short link" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 }
 
