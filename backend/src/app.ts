@@ -1,10 +1,10 @@
 import express from "express";
-import healthRoute from "./routes/health.js";
+import linkRoutes from "./routes/link.routes.js";
 
 const app = express();
 
 app.use(express.json());
 
-app.use("/health", healthRoute);
+app.use("/api/links", linkRoutes);
 
 export default app;
