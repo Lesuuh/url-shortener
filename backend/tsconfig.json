@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    /* File Layout */
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    /* Environment Settings */
+    "module": "esnext", // Replaces "esnext" for seamless Node compatibility
+    "moduleResolution": "bundler", // FIX: Matches modern Node module handling
+    "target": "ES2023", // Slightly upgraded for better native modern JS support
+    "types": ["node"],
+
+    /* Other Outputs */
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    /* Stricter Typechecking Options */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    /* Modern Recommended Options */
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "ignoreDeprecations": "6.0",
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "*.config.ts", // <-- This tells TS to ignore any config files in the root
+    "prisma" // <-- This tells TS to ignore the prisma folder
+  ]
+}
