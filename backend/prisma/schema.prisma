@@ -12,11 +12,17 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserTier {
+  BASIC
+  PRO
+}
+
 model User {
   id            String   @id @default(cuid())
   name          String?
   email         String   @unique
   password_hash String
+  tier UserTier @default(BASIC)
   createdAt     DateTime @default(now())
 
   links Links[]

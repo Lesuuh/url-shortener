@@ -5,6 +5,7 @@ import {
   getUserLinksController,
   redirectToOriginalUrlController,
 } from "src/controllers/link.controller";
+import requireAuth from "src/middlewares/auth.middleware";
 
 const router = Router();
 
@@ -13,14 +14,14 @@ router.get("/health", (req, res) => {
 });
 
 // create short link or url
-router.post("/", createLinkController);
+router.post("/", requireAuth, createLinkController);
 
 // redirect to original url
-router.get("/r/:code", redirectToOriginalUrlController);
+router.get("/r/:code", requireAuth, redirectToOriginalUrlController);
 
 // delete link
-router.post("/delete", deleteLinkController);
+router.post("/delete", requireAuth, deleteLinkController);
 
-router.get("/user/:user_id", getUserLinksController);
+router.get("/user/:user_id", requireAuth, getUserLinksController);
 
 export default router;
