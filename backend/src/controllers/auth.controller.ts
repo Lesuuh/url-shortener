@@ -45,6 +45,6 @@ export async function LogoutController(req: Request, res: Response) {
 
 export async function DeleteAccountController(req: any, res: Response) {
   const user_id = req.userId;
-  await new AuthService().deleteAccount(user_id);
+  deleteAccount(user_id);
   res.json({ message: "Account deleted successfully" });
 }
