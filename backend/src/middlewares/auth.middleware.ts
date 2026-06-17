@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-async function verifyToken(req: Request, res: Response, next: NextFunction) {
+async function requireAuth(req: Request, res: Response, next: NextFunction) {
   const { token } = req.cookies;
 
   if (!token) {
@@ -21,3 +21,5 @@ async function verifyToken(req: Request, res: Response, next: NextFunction) {
     return res.status(401).json({ error: "Invalid or expired session token." });
   }
 }
+
+export default requireAuth;
