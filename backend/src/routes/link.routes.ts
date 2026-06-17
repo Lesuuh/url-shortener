@@ -17,7 +17,7 @@ router.get("/health", (req, res) => {
 router.post("/", requireAuth, createLinkController);
 
 // redirect to original url
-router.get("/r/:code", requireAuth, redirectToOriginalUrlController);
+router.get("/r/:code", redirectToOriginalUrlController);
 
 // delete link
 router.post("/delete", requireAuth, deleteLinkController);

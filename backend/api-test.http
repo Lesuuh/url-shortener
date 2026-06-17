@@ -1,0 +1,63 @@
+### Variables
+@baseUrl = http://localhost:5000/api
+@contentType = application/json
+
+# =============================================================================
+# AUTHENTICATION ENDPOINTS (Mapped to /api/auth)
+# =============================================================================
+
+### 1. Register a New Account
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "developer@example.com",
+  "password": "SuperSecurePassword123"
+}
+
+### 2. Login (This will automatically attach the HttpOnly cookie to subsequent requests)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "developer@example.com",
+  "password": "SuperSecurePassword123"
+}
+
+
+# =============================================================================
+# LINKS ENDPOINTS (Mapped to /api/links)
+# =============================================================================
+
+### 3. Check System Health
+GET {{baseUrl}}/links/health
+
+### 4. Create a Shortened Link (Protected - Requires Login Cookie)
+POST {{baseUrl}}/links/
+Content-Type: {{contentType}}
+
+{
+  "url": "https://www.github.com",
+  "custom_alias": "mygit"
+}
+
+### 5. Get All Links Belonging to a User (Protected - Replace '123' with actual User ID)
+GET {{baseUrl}}/links/user/123
+
+### 6. Redirect to Original URL (Public Link - See Router Note Below)
+GET {{baseUrl}}/links/r/mygit
+
+### 7. Delete an Existing Link (Protected)
+POST {{baseUrl}}/links/delete
+Content-Type: {{contentType}}
+
+{
+  "link_id": "replace-with-actual-link-id"
+}
+
+# =============================================================================
+# LOGOUT ENDPOINT
+# =============================================================================
+
+### 8. Logout (Clears the Auth Cookie Session)
+POST {{baseUrl}}/auth/logout

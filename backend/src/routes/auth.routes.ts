@@ -11,4 +11,4 @@ router.post("/login", LoginController);
 router.post("/register", RegisterController);
 router.post("/logout", LogoutController);
 
-export default Router();
+export default router;
