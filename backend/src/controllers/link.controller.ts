@@ -9,6 +9,7 @@ import {
 
 function isValidUrl(url_string: string): boolean {
   const url = new URL(url_string);
+
   try {
     return url.protocol === "http:" || url.protocol === "https:";
   } catch (error) {
@@ -18,17 +19,12 @@ function isValidUrl(url_string: string): boolean {
 
 export async function createLinkController(req: Request, res: Response) {
   try {
-    const url = req.body?.url;
-    const custom_alias = req.body?.custom_alias;
+    const { url, custom_alias } = req.body;
 
-    if (custom_alias) {
-      const existingCustomAlias = checkCustomAlias(custom_alias);
-      if (await existingCustomAlias) {
-        return res.status(400).json({
-          error: `The custom alias '${custom_alias}' is already taken.`,
-        });
-      }
-    }
+    // 🔑 SECURITY FIX: Pull the ID safely from your auth middleware, NOT the body!
+    const userId = (req as any).user_id;
+    console.log(userId);
+
     if (!url) {
       return res.status(400).json({ message: "URL is required" });
     }
@@ -40,11 +36,29 @@ export async function createLinkController(req: Request, res: Response) {
       });
     }
 
-    const userId = req.body?.user_id;
+    // 🔑 FIX: Await the database check properly right away
+    if (custom_alias) {
+      const isAliasTaken = await checkCustomAlias(custom_alias);
+      if (isAliasTaken) {
+        return res.status(400).json({
+          error: `The custom alias '${custom_alias}' is already taken.`,
+        });
+      }
+    }
+
+    // 🔑 FIX: Pass all four arguments down to your corrected service function
     const link = await createLink(url, userId, custom_alias);
-    return res.status(201).json({ link });
-  } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+
+    const app_domain = process.env.APP_DOMAIN || "http://localhost:5000";
+
+    const fullShortUrl = `${app_domain}/${link.short_code}`;
+
+    return res.status(201).json({ link: { link, fullShortUrl } });
+  } catch (error: any) {
+    console.error("Link Creation Failure:", error);
+    return res
+      .status(500)
+      .json({ error: error.message || "Internal Server Error" });
   }
 }
 
@@ -63,7 +77,9 @@ export async function redirectToOriginalUrlController(
     const link = await getOriginalUrlByCode(safeCode);
 
     if (!link) {
-      return res.status(404).json({ message: "Link not found" });
+      return res
+        .status(404)
+        .send("<h1>URL Not Found</h1><p>This short link does not exist.</p>");
     }
 
     if (link.expires_at && new Date() > link.expires_at) {

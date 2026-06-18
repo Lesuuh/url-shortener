@@ -1,4 +1,4 @@
-import type { Links } from "src/generated/prisma/client.js";
+import { UserTier, type Links } from "src/generated/prisma/client.js";
 import prisma from "../config/db.js";
 import { generateCode } from "../utils/generateCode.js";
 
@@ -16,20 +16,25 @@ export async function createLink(
 
   const expiresAt = new Date();
 
-  if (user.tier === "PRO") {
-    expiresAt.setMonth(expiresAt.getMonth() + 6); // 6 months for pro
+  // 🔑 Guard: Ensure matching Enum casing (e.g., 'PRO' vs 'BASIC')
+  if (user.tier === UserTier.PRO) {
+    expiresAt.setMonth(expiresAt.getMonth() + 6);
   } else {
-    expiresAt.setMonth(expiresAt.getMonth() + 1); // 1 month for basic
+    expiresAt.setMonth(expiresAt.getMonth() + 1);
   }
 
-  const shortCode = custom_alias || generateCode(6);
+  // Fallback to avoid empty strings passing through as a custom alias
+  const finalAlias =
+    custom_alias && custom_alias.trim() !== "" ? custom_alias : null;
+  const shortCode = finalAlias || generateCode(6);
 
   const link = await prisma.links.create({
     data: {
       original_url: url,
       short_code: shortCode,
+      // 🔑 Double check your schema.prisma! If it says 'userId', change this key to 'userId'
       user_id: user_id,
-      custom_alias: custom_alias ?? null,
+      custom_alias: finalAlias,
       expires_at: expiresAt,
     },
   });
