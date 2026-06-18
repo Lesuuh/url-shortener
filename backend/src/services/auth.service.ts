@@ -15,11 +15,11 @@ interface AuthResult {
 export class AuthService {
   private jwtSecret = process.env.JWT_SECRET || "fallback_secret_key";
 
-  async register(
+  register = async (
     name: string,
     email: string,
     password: string,
-  ): Promise<AuthResult> {
+  ): Promise<AuthResult> => {
     const existingUser = await prisma.user.findUnique({
       where: { email: email },
     });
@@ -31,8 +31,8 @@ export class AuthService {
       data: {
         name: name,
         email: email,
-        password: hashPassword,
-      } as any,
+        password_hash: hashPassword,
+      },
     });
 
     const token = jwt.sign({ userId: user.id }, this.jwtSecret, {
@@ -47,9 +47,9 @@ export class AuthService {
         name: user.name,
       },
     };
-  }
+  };
 
-  async login(email: string, password: string): Promise<AuthResult> {
+  login = async (email: string, password: string): Promise<AuthResult> => {
     const existingUser = await prisma.user.findUnique({
       where: { email: email },
     });
@@ -79,7 +79,7 @@ export class AuthService {
         name: existingUser.name,
       },
     };
-  }
+  };
 
   async deleteAccount(user_id: string): Promise<void> {
     if (!user_id) {

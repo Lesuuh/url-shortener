@@ -12,7 +12,9 @@ Content-Type: {{contentType}}
 
 {
   "email": "developer@example.com",
-  "password": "SuperSecurePassword123"
+  "password": "SuperSecurePassword123",
+  "name": "Testname",
+  "tier": "BASIC"
 }
 
 ### 2. Login (This will automatically attach the HttpOnly cookie to subsequent requests)
