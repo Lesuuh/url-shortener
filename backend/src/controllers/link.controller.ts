@@ -92,17 +92,20 @@ export async function redirectToOriginalUrlController(
 }
 
 export async function deleteLinkController(req: Request, res: Response) {
-  const user_id = req.body?.user_id;
-  const short_code = req.body?.short_code;
+  const { link_id } = (req as any).params;
+  const user_id = (req as any).user_id;
 
-  if (!user_id || !short_code) {
+  console.log(user_id);
+  console.log(link_id);
+
+  if (!user_id || !link_id) {
     return res
       .status(400)
-      .json({ message: "User Id and short_code are required" });
+      .json({ message: "User Id and link_id are required" });
   }
 
   try {
-    await deleteLink(user_id, short_code);
+    await deleteLink(user_id, link_id);
     return res.json({ message: "Link deleted successfully" });
   } catch (error) {
     return res.status(500).json({ Error: "Internal server error" });
@@ -110,7 +113,7 @@ export async function deleteLinkController(req: Request, res: Response) {
 }
 
 export async function getUserLinksController(req: Request, res: Response) {
-  const user_id = req.body?.user_id;
+  const user_id = (req as any).user_id;
 
   if (!user_id) {
     return res.status(400).json({ message: "User Id is required" });
@@ -118,6 +121,8 @@ export async function getUserLinksController(req: Request, res: Response) {
 
   try {
     const allLinks = await getUserLinks(user_id);
+
+    return res.status(200).json({ allLinks });
   } catch (error) {
     return res.status(500).json({ Error: "Internal server error" });
   }

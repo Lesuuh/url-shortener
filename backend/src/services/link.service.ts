@@ -56,9 +56,9 @@ export async function getOriginalUrlByCode(
   });
 }
 
-export async function deleteLink(user_id: string, short_code: string) {
+export async function deleteLink(user_id: string, link_id: string) {
   const link = await prisma.links.findFirst({
-    where: { short_code: short_code },
+    where: { id: link_id },
   });
 
   if (!link) throw new Error("Link not found");
@@ -66,7 +66,7 @@ export async function deleteLink(user_id: string, short_code: string) {
   if (link && link.user_id !== user_id) throw new Error("UNAUTHORIZED");
 
   return prisma.links.delete({
-    where: { short_code: short_code },
+    where: { id: link_id },
   });
 }
 
