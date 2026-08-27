@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/auth";
 import { api, ApiError } from "../lib/api";
 import { copyToClipboard } from "../lib/clipboard";
@@ -9,6 +9,8 @@ import {
   CopyIcon,
   ExternalIcon,
   HistoryIcon,
+  LinkIcon,
+  SearchIcon,
   SpinnerIcon,
   TrashIcon,
 } from "./Icons";
@@ -17,6 +19,14 @@ interface LinkListProps {
   refreshSignal: number;
 }
 
+type Tab = "all" | "active" | "expired";
+
+const TABS: { id: Tab; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "active", label: "Active" },
+  { id: "expired", label: "Expired" },
+];
+
 export function LinkList({ refreshSignal }: LinkListProps) {
   const { user } = useAuth();
   const [links, setLinks] = useState<LinkRecord[] | null>(null);
@@ -24,6 +34,8 @@ export function LinkList({ refreshSignal }: LinkListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>("all");
+  const [query, setQuery] = useState("");
 
   const copy = useCallback(async (code: string) => {
     const ok = await copyToClipboard(shortUrl(code));
@@ -57,32 +69,127 @@ export function LinkList({ refreshSignal }: LinkListProps) {
     void load();
   }, [user, refreshSignal, load]);
 
+  const stats = useMemo(() => {
+    if (!links) return null;
+    const active = links.filter((l) => !isExpired(l.expires_at)).length;
+    return {
+      total: links.length,
+      active,
+      expired: links.length - active,
+    };
+  }, [links]);
+
+  const visible = useMemo(() => {
+    if (!links) return [];
+    const q = query.trim().toLowerCase();
+    return links.filter((link) => {
+      if (tab === "active" && isExpired(link.expires_at)) return false;
+      if (tab === "expired" && !isExpired(link.expires_at)) return false;
+      if (!q) return true;
+      return (
+        link.short_code.toLowerCase().includes(q) ||
+        (link.custom_alias?.toLowerCase().includes(q) ?? false) ||
+        link.original_url.toLowerCase().includes(q) ||
+        hostname(link.original_url).toLowerCase().includes(q)
+      );
+    });
+  }, [links, tab, query]);
+
+  const counts = useMemo(() => {
+    if (!links) return { all: 0, active: 0, expired: 0 };
+    const active = links.filter((l) => !isExpired(l.expires_at)).length;
+    return { all: links.length, active, expired: links.length - active };
+  }, [links]);
+
   if (!user) return null;
+
+  const filteredOut = links !== null && visible.length === 0;
+  const hasQuery = query.trim() !== "";
 
   return (
     <section
       id="history"
       aria-label="Your links"
-      className="mx-auto w-full"
+      className="mx-auto mt-12 w-full"
     >
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-sm font-bold tracking-tight">
-          <HistoryIcon width={15} height={15} className="text-ink-mute" />
-          History
-          {links && links.length > 0 && (
-            <span className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-semibold text-accent-strong">
-              {links.length}
-            </span>
-          )}
-        </h2>
-        <button
-          type="button"
-          onClick={() => void load()}
-          className="btn-quiet"
-          disabled={links === null}
-        >
-          Refresh
-        </button>
+      {/* Stats overview */}
+      {stats && stats.total > 0 && (
+        <div className="animate-rise mb-6 grid grid-cols-3 gap-3">
+          <StatCard label="Total links" value={stats.total} />
+          <StatCard
+            label="Active"
+            value={stats.active}
+            tone={stats.active > 0 ? "accent" : undefined}
+          />
+          <StatCard
+            label="Expired"
+            value={stats.expired}
+            tone={stats.expired > 0 ? "danger" : undefined}
+          />
+        </div>
+      )}
+
+      {/* Toolbar */}
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <h2 className="flex items-center gap-2 text-sm font-bold tracking-tight">
+            <HistoryIcon width={15} height={15} className="text-ink-mute" />
+            Your links
+          </h2>
+
+          <div
+            className="flex items-center rounded-md bg-surface-2 p-0.5"
+            role="tablist"
+            aria-label="Filter links"
+          >
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={tab === t.id}
+                onClick={() => setTab(t.id)}
+                className={`rounded-md px-2.5 py-1 text-xs font-semibold transition focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none ${
+                  tab === t.id
+                    ? "bg-surface text-ink shadow-sm"
+                    : "text-ink-mute hover:text-ink"
+                }`}
+              >
+                {t.label}
+                <span className="ml-1 text-[11px] opacity-60">
+                  {counts[t.id]}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="relative min-w-0 flex-1 sm:w-56 sm:flex-none">
+            <SearchIcon
+              width={14}
+              height={14}
+              className="pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-ink-mute"
+            />
+            <input
+              type="search"
+              spellCheck={false}
+              placeholder="Search links…"
+              aria-label="Search your links"
+              className="field h-8 border-transparent bg-surface pl-8 text-[13px] focus:border-accent"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => void load()}
+            className="btn-quiet h-8 shrink-0"
+            disabled={links === null}
+          >
+            Refresh
+          </button>
+        </div>
       </div>
 
       {links === null && !error && (
@@ -115,18 +222,32 @@ export function LinkList({ refreshSignal }: LinkListProps) {
       )}
 
       {links !== null && links.length === 0 && (
-        <div className="card flex flex-col items-center justify-center px-6 py-10 text-center">
-          <span className="mb-2.5 flex size-9 items-center justify-center rounded-lg bg-accent-soft text-accent">
-            <LinkIconPlaceholder />
+        <div className="card flex flex-col items-center justify-center px-6 py-12 text-center">
+          <span className="mb-3 flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent">
+            <LinkIcon width={19} height={19} />
           </span>
           <p className="text-sm font-semibold">No links yet</p>
-          <p className="mt-0.5 max-w-xs text-[13px] text-ink-mute">
-            Shorten your first link above and it’ll show up here.
+          <p className="mt-1 max-w-xs text-[13px] text-ink-mute">
+            Shorten your first link above — it’ll appear here and stay
+            attached to your account.
           </p>
         </div>
       )}
 
-      {links !== null && links.length > 0 && (
+      {links !== null && links.length > 0 && filteredOut && (
+        <div className="card flex flex-col items-center justify-center px-6 py-10 text-center">
+          <p className="text-sm font-semibold">
+            {hasQuery ? "No links match your search" : "Nothing here"}
+          </p>
+          <p className="mt-1 max-w-xs text-[13px] text-ink-mute">
+            {hasQuery
+              ? "Try a different search term or switch tabs."
+              : `You don’t have any ${tab} links right now.`}
+          </p>
+        </div>
+      )}
+
+      {visible.length > 0 && (
         <>
           <div className="card hidden overflow-hidden md:block">
             <table className="w-full text-left text-[13px]">
@@ -142,7 +263,7 @@ export function LinkList({ refreshSignal }: LinkListProps) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-line">
-                {links.map((link) => (
+                {visible.map((link) => (
                   <RowDesktop
                     key={link.id}
                     link={link}
@@ -162,7 +283,7 @@ export function LinkList({ refreshSignal }: LinkListProps) {
           </div>
 
           <div className="space-y-2 md:hidden">
-            {links.map((link) => (
+            {visible.map((link) => (
               <RowMobile
                 key={link.id}
                 link={link}
@@ -199,6 +320,35 @@ export function LinkList({ refreshSignal }: LinkListProps) {
       setDeletingId(null);
     }
   }
+}
+
+function StatCard({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone?: "accent" | "danger";
+}) {
+  return (
+    <div className="card px-4 py-3.5">
+      <p className="text-[11px] font-semibold tracking-wide text-ink-mute uppercase">
+        {label}
+      </p>
+      <p
+        className={`mt-1 text-2xl font-bold tracking-tight ${
+          tone === "accent"
+            ? "text-accent-strong"
+            : tone === "danger"
+              ? "text-danger-strong"
+              : "text-ink"
+        }`}
+      >
+        {value}
+      </p>
+    </div>
+  );
 }
 
 function linkUrl(link: LinkRecord): string {
@@ -396,24 +546,5 @@ function RowMobile(props: RowProps) {
         <ExpiryBadge link={link} />
       </div>
     </div>
-  );
-}
-
-function LinkIconPlaceholder() {
-  return (
-    <svg
-      width={18}
-      height={18}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
   );
 }

@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer-core";
 
-const APP = "http://localhost:5000";
+const APP = process.env.APP_URL || "http://localhost:5000";
 const EMAIL = `e2e-${Date.now()}@example.com`;
 const PASSWORD = "password123";
 const ALIAS = `alias${Date.now()}`;
@@ -75,11 +75,6 @@ try {
   });
   page.on("pageerror", (err) => consoleErrors.push(`pageerror: ${err.message}`));
 
-  let linkPosts = 0;
-  page.on("request", (req) => {
-    if (req.method() === "POST" && req.url().includes("/api/links/")) linkPosts++;
-  });
-
   const cdp = await page.createCDPSession();
   await cdp.send("Browser.grantPermissions", {
     origin: APP,
@@ -130,62 +125,61 @@ try {
   }
   log("PASS dead short links redirect to the 404 page");
 
-  /* ---------- Deep link from marketing to app ---------- */
+  /* ---------- App requires sign-in ---------- */
+  await page.goto(APP + "/app", { waitUntil: "networkidle0" });
+  await waitForText(page, "main", "Sign in to Knot", 10000);
+  log("PASS unauthenticated /app redirects to the sign-in page");
+
+  /* ---------- Deep link → sign up → shorten ---------- */
   await page.goto(
     APP + "/app?url=" + encodeURIComponent("https://example.com/prefill"),
     { waitUntil: "networkidle0" },
   );
-  const prefill = await page.$eval(
-    'input[aria-label="URL to shorten"]',
-    (el) => el.value,
-  );
-  if (prefill !== "https://example.com/prefill") {
-    throw new Error(`deep-link prefill failed: "${prefill}"`);
-  }
-  log("PASS marketing → app deep link pre-fills the URL");
+  await waitForText(page, "main", "Sign in to Knot", 10000);
+  log("PASS marketing → app deep link lands on the sign-in page");
 
-  /* ---------- App: sign-up + shorten flow ---------- */
-  await page.goto(APP + "/app", { waitUntil: "networkidle0" });
-
-  const input = await page.$('input[aria-label="URL to shorten"]');
-  if (!input) throw new Error("Shorten input missing");
-  log("PASS shorten command bar renders");
-
-  await input.type("https://www.vercel.com/");
-  await click(page, "main button[type=submit]");
-  await waitForText(page, '[role="dialog"]', "Create account", 10000);
-  log("PASS unauthenticated shorten opens auth dialog (pending flow)");
-
-  const beforeRegister = linkPosts;
   const nameField = await page.$("#auth-name");
   if (!nameField) {
-    await click(page, '[role="dialog"] button[role="tab"]:has-text("Create account")');
+    await clickButtonByText(page, "main", "Create account");
     await sleep(200);
   }
   await page.type("#auth-name", "E2E Tester");
   await page.type("#auth-email", EMAIL);
   await page.type("#auth-password", PASSWORD);
-  await click(page, '[role="dialog"] button[type="submit"]');
-  await sleep(1500);
+  await click(page, 'main button[type="submit"]');
+  await sleep(1800);
 
+  await waitForText(page, "main", "Your links", 10000);
+  const prefill = await page.$eval(
+    'input[aria-label="URL to shorten"]',
+    (el) => el.value,
+  );
+  if (prefill !== "https://example.com/prefill") {
+    throw new Error(`deep-link prefill lost after sign-up: "${prefill}"`);
+  }
+  log("PASS sign-up returns to the app with the URL still pre-filled");
+
+  await click(page, "main button[type=submit]");
   await waitForText(page, "main", "Your short link is ready", 15000);
   const shortLink = await page.$eval("main a.font-mono", (el) => el.textContent);
   if (!/localhost:5000\/[a-z0-9]+/i.test(shortLink)) {
     throw new Error("Unexpected short link: " + shortLink);
   }
-  log(`PASS registered → pending URL auto-shortened: ${shortLink}`);
-  log(`      (link POSTs used: ${linkPosts - beforeRegister}, expected 1 — no loop)`);
+  log(`PASS signed-in shorten creates: ${shortLink}`);
 
   const redirect = await httpCheck(new URL(shortLink).pathname);
-  if (redirect.status !== 302 || redirect.location !== "https://www.vercel.com/") {
+  if (
+    redirect.status !== 302 ||
+    redirect.location !== "https://example.com/prefill"
+  ) {
     throw new Error(
       `short link did not 302 to the original (${redirect.status} -> ${redirect.location})`,
     );
   }
   log("PASS short link resolves with a 302 to the original URL");
 
-  await waitForText(page, "main", "My links", 8000);
-  log("PASS signed-in state shows My links");
+  await waitForText(page, "main", "Your links", 8000);
+  log("PASS signed-in dashboard renders");
 
   await clickButtonByText(page, "main", "Copy");
   await sleep(600);
@@ -231,11 +225,16 @@ try {
   }
   log("PASS delete link works");
 
-  await click(page, 'button[title="Sign out"]');
+  /* ---------- Sign out → back to the sign-in page ---------- */
+  await click(page, 'button[aria-label^="Account menu"]');
+  await sleep(200);
+  await click(page, 'button[role="menuitem"]');
   await sleep(800);
-  const signInBtn = await page.$("aside button.btn-primary");
-  if (!signInBtn) throw new Error("Sign out did not return to signed-out state");
-  log("PASS sign out returns to signed-out state");
+  if (!page.url().includes("/app/login")) {
+    throw new Error("Sign out did not land on the sign-in page: " + page.url());
+  }
+  await waitForText(page, "main", "Sign in to Knot", 8000);
+  log("PASS sign out returns to the sign-in page");
 
   if (consoleErrors.length > 0) {
     throw new Error("Console errors detected:\n" + consoleErrors.join("\n"));

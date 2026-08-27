@@ -2,7 +2,11 @@ export class ApiError extends Error {
   status: number;
   fields?: Record<string, string>;
 
-  constructor(status: number, message: string, fields?: Record<string, string>) {
+  constructor(
+    status: number,
+    message: string,
+    fields?: Record<string, string>,
+  ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
@@ -14,7 +18,10 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
+async function request<T>(
+  path: string,
+  options: RequestOptions = {},
+): Promise<T> {
   const { body, headers, ...rest } = options;
 
   let response: Response;
@@ -29,7 +36,10 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError(0, "Can't reach the server. Check your connection and try again.");
+    throw new ApiError(
+      0,
+      "Can't reach the server. Check your connection and try again.",
+    );
   }
 
   let data: Record<string, unknown> = {};
@@ -71,6 +81,12 @@ export const api = {
       method: "POST",
       body: { email, password },
     }),
+
+  me: () => {
+    return request<import("../types").User>("/auth/me", {
+      method: "GET",
+    });
+  },
 
   logout: () =>
     request<{ message: string }>("/auth/logout", { method: "POST" }),
