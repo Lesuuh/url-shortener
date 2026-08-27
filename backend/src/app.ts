@@ -19,19 +19,22 @@ app.use("/api/auth", authLimit, authRoutes);
 app.use("/api/links", globalRateLimit, linkRoutes);
 
 app.get("/api", (req, res) => {
-  res.type("text/plain").send(
-    [
-      "Knot API",
-      "",
-      "GET    /api/links/health   health check",
-      "POST   /api/auth/register  create an account",
-      "POST   /api/auth/login     sign in (sets an httpOnly cookie)",
-      "POST   /api/auth/logout    sign out",
-      "POST   /api/links/         shorten a URL (auth)",
-      "GET    /api/links/my-links your links (auth)",
-      "DELETE /api/links/:id      delete one of your links (auth)",
-    ].join("\n"),
-  );
+  res
+    .type("text/plain")
+    .send(
+      [
+        "Knot API",
+        "",
+        "GET    /api/links/health   health check",
+        "POST   /api/auth/register  create an account",
+        "POST   /api/auth/login     sign in (sets an httpOnly cookie)",
+        "GET    /api/auth/me        get the authenticated user (auth)",
+        "POST   /api/auth/logout    sign out",
+        "POST   /api/links/         shorten a URL (auth)",
+        "GET    /api/links/my-links your links (auth)",
+        "DELETE /api/links/:id      delete one of your links (auth)",
+      ].join("\n"),
+    );
 });
 
 /* ---------- Frontend (built marketing site + app) ----------

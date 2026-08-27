@@ -1,7 +1,9 @@
 import { type Request, type Response } from "express";
 import { AuthService } from "src/services/auth.service";
+import { clearAuthCookie, setAuthCookie } from "src/utils/authCookie";
+import jwt from "jsonwebtoken";
 
-const { login, register, deleteAccount } = new AuthService();
+const { login, register, deleteAccount, getMe } = new AuthService();
 
 export async function LoginController(req: Request, res: Response) {
   const { email, password } = req.body;
@@ -13,12 +15,8 @@ export async function LoginController(req: Request, res: Response) {
   try {
     const { token, user } = await login(email, password);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    setAuthCookie(res, token);
+
     return res.status(200).json({
       message: "Login Successful",
       user: user,
@@ -56,12 +54,7 @@ export async function RegisterController(req: Request, res: Response) {
   try {
     const { token, user } = await register(name, email, password);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+    setAuthCookie(res, token);
 
     return res
       .status(201)
@@ -83,11 +76,7 @@ export async function RegisterController(req: Request, res: Response) {
 }
 
 export async function LogoutController(req: Request, res: Response) {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-  });
+  clearAuthCookie(res);
   res.json({ message: "Logged out successfully" });
 }
 
@@ -95,4 +84,23 @@ export async function DeleteAccountController(req: any, res: Response) {
   const user_id = req.userId;
   deleteAccount(user_id);
   res.json({ message: "Account deleted successfully" });
+}
+
+export async function meController(req: any, res: Response) {
+  const token = req.cookies.token;
+  if (!token) {
+    return res
+      .status(401)
+      .json({ error: "Access denied. No session token provided." });
+  }
+
+  try {
+    jwt.verify(token, process.env.JWT_SECRET || "fall-back string");
+    const userId = req.user_id;
+    // get the user from the database using the userId
+    const user = await getMe(userId);
+    res.status(200).json({ user });
+  } catch (error) {
+    return res.status(401).json({ error: "Invalid or expired token." });
+  }
 }

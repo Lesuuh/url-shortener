@@ -1,6 +1,7 @@
 import prisma from "src/config/db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import type { User } from "src/generated/prisma/client";
 
 interface AuthResult {
   token: string;
@@ -89,5 +90,19 @@ export class AuthService {
     await prisma.user.delete({
       where: { id: user_id },
     });
+  }
+
+  async getMe(user_id: string): Promise<User> {
+    if (!user_id) {
+      throw new Error("Invalid user");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: user_id },
+    });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
   }
 }

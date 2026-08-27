@@ -13,7 +13,7 @@ export const globalRateLimit = rateLimit({
 
 export const authLimit = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hr tracking
-  limit: 5,
+  limit: 20,
   message: {
     error:
       "Too many login attempts. Account protection triggered. Try again in an hour.",
