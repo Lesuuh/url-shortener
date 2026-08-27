@@ -1,18 +1,23 @@
+import { QRCodeCanvas } from "qrcode.react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "../context/auth";
 import { api, ApiError } from "../lib/api";
 import { copyToClipboard } from "../lib/clipboard";
+import { toCsv, downloadCsv } from "../lib/csv";
 import { formatDate, hostname, isExpired, shortUrl } from "../lib/format";
 import type { LinkRecord } from "../types";
 import {
   CheckIcon,
   CopyIcon,
+  DownloadIcon,
   ExternalIcon,
   HistoryIcon,
   LinkIcon,
+  QrCodeIcon,
   SearchIcon,
   SpinnerIcon,
   TrashIcon,
+  XIcon,
 } from "./Icons";
 
 interface LinkListProps {
@@ -36,6 +41,8 @@ export function LinkList({ refreshSignal }: LinkListProps) {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("all");
   const [query, setQuery] = useState("");
+  const [qrLink, setQrLink] = useState<LinkRecord | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   const copy = useCallback(async (code: string) => {
     const ok = await copyToClipboard(shortUrl(code));
@@ -189,6 +196,35 @@ export function LinkList({ refreshSignal }: LinkListProps) {
           >
             Refresh
           </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (!links || links.length === 0) return;
+              setExporting(true);
+              const rows: (string | number)[][] = [
+                ["Short URL", "Custom alias", "Original URL", "Created", "Expires"],
+                ...links.map((l) => [
+                  shortUrl(l.short_code),
+                  l.custom_alias ?? "",
+                  l.original_url,
+                  l.createdAt,
+                  l.expires_at ?? "",
+                ]),
+              ];
+              downloadCsv(
+                `knot-links-${new Date().toISOString().slice(0, 10)}.csv`,
+                toCsv(rows),
+              );
+              window.setTimeout(() => setExporting(false), 600);
+            }}
+            className="btn-quiet h-8 shrink-0"
+            disabled={links === null || links.length === 0 || exporting}
+            title="Download your links as CSV"
+            aria-label="Export links as CSV"
+          >
+            <DownloadIcon width={14} height={14} />
+            CSV
+          </button>
         </div>
       </div>
 
@@ -269,6 +305,7 @@ export function LinkList({ refreshSignal }: LinkListProps) {
                     link={link}
                     copied={copiedCode === link.short_code}
                     onCopy={() => void copy(link.short_code)}
+                    onQr={() => setQrLink(link)}
                     confirming={confirmId === link.id}
                     deleting={deletingId === link.id}
                     onAskDelete={() =>
@@ -289,6 +326,7 @@ export function LinkList({ refreshSignal }: LinkListProps) {
                 link={link}
                 copied={copiedCode === link.short_code}
                 onCopy={() => void copy(link.short_code)}
+                onQr={() => setQrLink(link)}
                 confirming={confirmId === link.id}
                 deleting={deletingId === link.id}
                 onAskDelete={() =>
@@ -299,6 +337,10 @@ export function LinkList({ refreshSignal }: LinkListProps) {
               />
             ))}
           </div>
+
+          {qrLink && (
+            <QrModal link={qrLink} onClose={() => setQrLink(null)} />
+          )}
         </>
       )}
     </section>
@@ -375,6 +417,7 @@ interface RowProps {
   link: LinkRecord;
   copied: boolean;
   onCopy: () => void;
+  onQr: () => void;
   confirming: boolean;
   deleting: boolean;
   onAskDelete: () => void;
@@ -468,6 +511,15 @@ function RowDesktop(props: RowProps) {
               <CopyIcon width={13} height={13} />
             )}
           </button>
+          <button
+            type="button"
+            onClick={props.onQr}
+            className="text-ink-mute opacity-0 transition group-hover:opacity-100 hover:text-ink focus-visible:opacity-100"
+            aria-label={`Show QR code for ${code}`}
+            title="QR code"
+          >
+            <QrCodeIcon width={13} height={13} />
+          </button>
         </div>
         <a
           href={shortUrl(code)}
@@ -537,6 +589,14 @@ function RowMobile(props: RowProps) {
               <CopyIcon width={15} height={15} />
             )}
           </button>
+          <button
+            type="button"
+            onClick={props.onQr}
+            className="btn-quiet"
+            aria-label={`Show QR code for ${code}`}
+          >
+            <QrCodeIcon width={15} height={15} />
+          </button>
           <DeleteActions label={linkUrl(link)} {...props} />
         </div>
       </div>
@@ -544,6 +604,79 @@ function RowMobile(props: RowProps) {
         <span>Created {formatDate(link.createdAt)}</span>
         <span aria-hidden>·</span>
         <ExpiryBadge link={link} />
+      </div>
+    </div>
+  );
+}
+
+function QrModal({
+  link,
+  onClose,
+}: {
+  link: LinkRecord;
+  onClose: () => void;
+}) {
+  const code = linkUrl(link);
+  const url = shortUrl(code);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`QR code for ${code}`}
+    >
+      <button
+        type="button"
+        aria-label="Close QR code"
+        onClick={onClose}
+        className="animate-fade absolute inset-0 cursor-default bg-overlay backdrop-blur-[2px]"
+      />
+      <div className="animate-pop relative flex w-full max-w-xs flex-col items-center gap-3 rounded-xl border border-line bg-surface p-6 text-center shadow-2xl">
+        <QRCodeCanvas
+          value={url}
+          size={176}
+          marginSize={2}
+          className="rounded-md"
+          fgColor="#111113"
+          bgColor="#ffffff"
+        />
+        <div className="min-w-0 w-full">
+          <p className="truncate font-mono text-[13px] font-medium text-accent-strong">
+            {code}
+          </p>
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-0.5 flex items-center justify-center gap-1 text-xs text-ink-mute hover:text-ink"
+          >
+            {hostname(link.original_url)} <ExternalIcon width={10} height={10} />
+          </a>
+        </div>
+        <button
+          type="button"
+          onClick={() => void copyToClipboard(url)}
+          className="btn-quiet w-full"
+        >
+          <CopyIcon width={14} height={14} />
+          Copy link
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="btn-quiet"
+          aria-label="Close"
+        >
+          <XIcon width={14} height={14} />
+        </button>
       </div>
     </div>
   );

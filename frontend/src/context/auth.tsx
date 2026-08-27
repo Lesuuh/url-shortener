@@ -28,7 +28,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const restoreSession = async () => {
       try {
         const user = await api.me();
-        console.log(user);
         setUserState(user);
       } catch {
         setUserState(null);

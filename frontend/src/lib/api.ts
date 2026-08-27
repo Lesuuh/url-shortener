@@ -98,6 +98,29 @@ export const api = {
   logout: () =>
     request<{ message: string }>("/auth/logout", { method: "POST" }),
 
+  logoutAll: () =>
+    request<{ message: string }>("/auth/logout-all", { method: "POST" }),
+
+  updateProfile: async (data: { name: string; email: string }) => {
+    const response = await request<{ user: User }>("/users/me", {
+      method: "PATCH",
+      body: data,
+    });
+    return response.user;
+  },
+
+  changePassword: (data: {
+    currentPassword: string;
+    newPassword: string;
+  }) =>
+    request<{ message: string }>("/auth/password", {
+      method: "POST",
+      body: { current_password: data.currentPassword, new_password: data.newPassword },
+    }),
+
+  deleteAccount: () =>
+    request<{ message: string }>("/users/me", { method: "DELETE" }),
+
   createLink: (url: string, customAlias?: string) =>
     request<import("../types").CreateLinkResponse>("/links/", {
       method: "POST",

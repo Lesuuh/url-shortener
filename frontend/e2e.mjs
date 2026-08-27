@@ -4,7 +4,7 @@ const APP = process.env.APP_URL || "http://localhost:5000";
 const EMAIL = `e2e-${Date.now()}@example.com`;
 const PASSWORD = "password123";
 const ALIAS = `alias${Date.now()}`;
-
+const mainQrButton = 'main button[aria-label^="Show QR code for"]';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const log = (msg) => console.log(msg);
 
@@ -224,6 +224,71 @@ try {
     );
   }
   log("PASS delete link works");
+
+  /* ---------- Settings ---------- */
+  await click(page, 'button[aria-label^="Account menu"]');
+  await sleep(250);
+  const settingsLink = await page.$('a[role="menuitem"]');
+  if (!settingsLink) throw new Error("Settings link missing in account menu");
+  await settingsLink.click();
+  await sleep(800);
+  if (!page.url().endsWith("/app/settings")) {
+    throw new Error("Account menu Settings didn't navigate to /app/settings");
+  }
+  await waitForText(page, "main", "Change password", 8000);
+  if (!(await page.$("#profile-name"))) {
+    throw new Error("Profile form missing on settings");
+  }
+  if (!(await page.$("#pw-current"))) {
+    throw new Error("Password form missing on settings");
+  }
+  if (!(await page.$("#profile-email"))) {
+    throw new Error("Email field missing on settings");
+  }
+  log("PASS settings page renders (profile + password)");
+
+  await page.type("#pw-current", PASSWORD);
+  await page.type("#pw-new", "newpassword1");
+  await page.type("#pw-confirm", "newpassword1");
+  await clickButtonByText(page, "main", "Update password");
+  await sleep(1500);
+  if (page.url().includes("/app/login")) {
+    throw new Error("Settings password update redirected to login unexpectedly");
+  }
+  log("PASS password change form can be submitted (backend may still 501)");
+
+  /* ---------- QR modal ---------- */
+  await page.goto(APP + "/app", { waitUntil: "networkidle0" });
+  await waitForText(page, "main", "Your links", 8000);
+  const qrBtn = await page.$(mainQrButton);
+  if (!qrBtn) throw new Error("QR code button missing in the links table");
+  await qrBtn.click();
+  await sleep(400);
+  const qrDialog = await page.$('div[role="dialog"][aria-label*="QR code"]');
+  if (!qrDialog) throw new Error("QR modal did not open");
+  const qrCanvas = await page.$('div[role="dialog"] canvas, div[role="dialog"] svg');
+  if (!qrCanvas) throw new Error("QR canvas/SVG not rendered in modal");
+  await click(page, 'div[role="dialog"] button[aria-label="Close"]');
+  await sleep(200);
+  if (await page.$('div[role="dialog"][aria-label*="QR code"]')) {
+    throw new Error("QR modal did not close");
+  }
+  log("PASS QR code modal opens and closes");
+
+  /* ---------- CSV export ---------- */
+  await click(page, 'button[aria-label="Export links as CSV"]');
+  await sleep(600);
+  log("PASS CSV export button clicked");
+
+  /* ---------- Danger zone ---------- */
+  await page.goto(APP + "/app/settings", { waitUntil: "networkidle0" });
+  await waitForText(page, "main", "Danger zone", 8000);
+  await clickButtonByText(page, "main", "Delete account");
+  await sleep(200);
+  if (!(await page.$$('button:has-text("Click again")')).length) {
+    throw new Error("Danger zone did not show confirm step");
+  }
+  log("PASS danger zone asks for confirmation");
 
   /* ---------- Sign out → back to the sign-in page ---------- */
   await click(page, 'button[aria-label^="Account menu"]');

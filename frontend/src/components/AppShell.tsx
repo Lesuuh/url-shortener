@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import { NavLink } from "react-router";
 import { useAuth } from "../context/auth";
 import { useTheme } from "../theme";
 import {
   ChevronDownIcon,
+  GearIcon,
   HistoryIcon,
   LogoMark,
   LogOutIcon,
@@ -53,15 +55,31 @@ function NavPrimary({
       </button>
       <div className="pt-5">
         <p className="label px-2">Manage</p>
-        <button
-          type="button"
-          onClick={onMyLinks}
-          className="flex w-full cursor-pointer items-center gap-2 rounded-md bg-accent-soft px-2 py-1.5 text-[13px] font-semibold text-accent-strong"
-          aria-current="page"
+        <NavLink
+          to="/"
+          className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] font-semibold text-ink-soft transition hover:bg-surface-2 hover:text-ink"
         >
-          <HistoryIcon width={14} height={14} className="opacity-80" />
-          My links
-        </button>
+          {({ isActive }) => (
+            <>
+              <HistoryIcon width={14} height={14} className="opacity-80" />
+              My links
+              {isActive && <span className="sr-only">(current)</span>}
+            </>
+          )}
+        </NavLink>
+        <NavLink
+          to="/settings"
+          onClick={onMyLinks}
+          className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[13px] font-semibold text-ink-soft transition hover:bg-surface-2 hover:text-ink"
+        >
+          {({ isActive }) => (
+            <>
+              <GearIcon width={14} height={14} className="opacity-80" />
+              Settings
+              {isActive && <span className="sr-only">(current)</span>}
+            </>
+          )}
+        </NavLink>
       </div>
     </>
   );
@@ -161,15 +179,26 @@ function AccountMenu({
             <p className="truncate text-[13px] font-semibold">{user.name ?? user.email}</p>
             <p className="truncate text-xs text-ink-mute">{user.email}</p>
           </div>
-          <button
-            type="button"
-            role="menuitem"
-            onClick={onSignOut}
-            className="flex w-full cursor-pointer items-center gap-2 px-3.5 py-2.5 text-[13px] font-medium text-ink-soft transition hover:bg-surface-2 hover:text-ink"
-          >
-            <LogOutIcon width={14} height={14} />
-            Sign out
-          </button>
+          <div className="space-y-1 p-1">
+            <NavLink
+              to="/settings"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="flex cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] font-medium text-ink-soft transition hover:bg-surface-2 hover:text-ink"
+            >
+              <GearIcon width={14} height={14} />
+              Settings
+            </NavLink>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={onSignOut}
+              className="flex w-full cursor-pointer items-center gap-2 rounded-md px-2.5 py-2 text-[13px] font-medium text-ink-soft transition hover:bg-surface-hover hover:text-ink"
+            >
+              <LogOutIcon width={14} height={14} />
+              Sign out
+            </button>
+          </div>
         </div>
       )}
     </div>
