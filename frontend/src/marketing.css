@@ -1,0 +1,46 @@
+/* ============================================================
+   Knot — marketing site entry styles
+   Used only by index.html and features.html.
+   `@import "tailwindcss"` + tokens.css give us the full token
+   system; @source below guarantees the static HTML files are
+   scanned for utility classes during the build.
+   ============================================================ */
+
+@import "tailwindcss";
+@import "./tokens.css";
+
+@source "../index.html";
+@source "../features.html";
+@source "../public/404.html";
+@source "./marketing";
+
+@layer components {
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-[11px] font-semibold tracking-wide text-ink-mute uppercase;
+  }
+
+  .section-head {
+    @apply mx-auto max-w-2xl text-center;
+  }
+
+  .feature-card {
+    @apply relative flex flex-col gap-3 rounded-lg border border-line bg-surface p-5;
+  }
+
+  .footer-link {
+    @apply block py-1 text-[13px] text-ink-mute transition hover:text-ink;
+  }
+}
+
+@layer utilities {
+  /* Subtle dot grid used behind the hero demo */
+  .dot-grid {
+    background-image: radial-gradient(var(--line-strong) 1px, transparent 1px);
+    background-size: 20px 20px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 75%);
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}

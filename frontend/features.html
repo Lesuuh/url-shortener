@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      document.documentElement.classList.toggle(
+        "dark",
+        localStorage.getItem("shrt.theme") === "dark" ||
+          (!localStorage.getItem("shrt.theme") &&
+            matchMedia("(prefers-color-scheme: dark)").matches),
+      );
+    </script>
+
+    <title>Features — Knot</title>
+    <meta
+      name="description"
+      content="Knot features in detail: custom aliases, auto-expiry, saved links, fast 302 redirects, easy deletion, and private-by-default ownership."
+    />
+    <link rel="canonical" href="__SITE_URL__/features" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Knot" />
+    <meta property="og:title" content="Features — Knot" />
+    <meta
+      property="og:description"
+      content="Knot features in detail: custom aliases, auto-expiry, saved links, fast redirects, easy deletion, and privacy."
+    />
+    <meta property="og:url" content="__SITE_URL__/features" />
+    <meta property="og:image" content="__OG_IMAGE__" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Features — Knot" />
+    <meta
+      name="twitter:description"
+      content="Knot features in detail: custom aliases, auto-expiry, saved links, fast redirects, easy deletion, and privacy."
+    />
+    <meta name="twitter:image" content="__OG_IMAGE__" />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#f7f7f8" />
+  </head>
+
+  <body class="bg-page font-sans text-ink antialiased">
+    <header class="sticky top-0 z-40 border-b border-line bg-page/80 backdrop-blur-lg">
+      <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <a href="/" class="mark" aria-label="Knot home">
+          <span class="mark-mark">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+              <path d="M9.5 14.5 8 16a3 3 0 1 1-4.24-4.24L7 8.5a3 3 0 0 1 4.24 0" />
+              <path d="M14.5 9.5 16 8a3 3 0 1 1 4.24 4.24L17 15.5a3 3 0 0 1-4.24 0" />
+            </svg>
+          </span>
+          knot
+        </a>
+
+        <div class="hidden items-center gap-7 text-[13px] font-medium text-ink-soft md:flex">
+          <a href="/#how" class="transition hover:text-ink">How it works</a>
+          <a href="/#features" class="font-semibold text-ink" aria-current="page">Features</a>
+          <a href="/#app" class="transition hover:text-ink">The app</a>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="theme-toggle" type="button" class="btn-quiet" aria-label="Toggle color theme"></button>
+          <a href="/app" class="btn-ghost hidden sm:inline-flex">Sign in</a>
+          <a href="/app" class="btn-primary">Open app</a>
+          <button id="menu-toggle" type="button" class="btn-quiet md:hidden" aria-label="Open menu" aria-expanded="false">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden>
+              <path d="M4 7h16" />
+              <path d="M4 12h16" />
+              <path d="M4 17h16" />
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      <div id="mobile-menu" class="hidden border-t border-line bg-page px-4 py-3 md:hidden">
+        <a href="/#how" class="block rounded-md px-2 py-2 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink">How it works</a>
+        <a href="/#features" class="block rounded-md px-2 py-2 text-sm font-medium text-ink hover:bg-surface-2">Features</a>
+        <a href="/#app" class="block rounded-md px-2 py-2 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink">The app</a>
+        <a href="/app" class="btn-primary mt-2 w-full">Open app</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="py-16 sm:py-20">
+        <div class="section-head">
+          <span class="eyebrow">Features</span>
+          <h1 class="display mt-4 text-balance text-3xl leading-tight sm:text-5xl">
+            Small tool. Proper job.
+          </h1>
+          <p class="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-ink-soft">
+            Knot doesn’t try to be everything. It shortens links well, keeps them
+            yours, and gets out of the way. Here’s exactly what that means.
+          </p>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-6xl space-y-6 px-4 pb-20 sm:px-6">
+        <div class="card grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
+          <div>
+            <span class="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent-strong">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+                <path d="m12 19 7-7 3 3-7 7-3-3z" />
+                <path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+                <path d="m2 2 7.586 7.586" />
+                <circle cx="11" cy="11" r="2" />
+              </svg>
+            </span>
+            <h2 class="mt-4 text-lg font-bold">Custom aliases</h2>
+            <p class="mt-2 text-[14px] leading-relaxed text-ink-soft">
+              Want a link that says what it means? Set an alias and your short
+              link becomes <span class="font-mono text-[13px]">knot.to/blog</span>
+              instead of a random code.
+            </p>
+          </div>
+          <div class="rounded-lg border border-line bg-surface-2/60 p-4 font-mono text-[12px] leading-7">
+            <p class="text-ink-mute">// optional — skip it for a random code</p>
+            <p><span class="text-ink-mute">url</span>: <span class="text-accent-strong">https://example.com/…</span></p>
+            <p><span class="text-ink-mute">custom_alias</span>: <span class="text-accent-strong">blog</span></p>
+            <p class="mt-2 text-ink-mute">→ <span class="text-accent-strong">knot.to/blog</span></p>
+            <p class="text-ink-mute">// 3–32 chars · letters, numbers, “-” and “_”</p>
+          </div>
+        </div>
+
+        <div class="card grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
+          <div>
+            <span class="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent-strong">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+              </svg>
+            </span>
+            <h2 class="mt-4 text-lg font-bold">Auto-expiry</h2>
+            <p class="mt-2 text-[14px] leading-relaxed text-ink-soft">
+              Every link carries an expiry date. By default it’s 30 days out, so
+              short codes never linger forever, pointing at content that’s long gone.
+            </p>
+          </div>
+          <div class="rounded-lg border border-line bg-surface-2/60 p-4 font-mono text-[12px] leading-7">
+            <p><span class="text-ink-mute">expires_at</span>: <span class="text-accent-strong">2026-09-12T10:00:00Z</span></p>
+            <p class="text-ink-mute">// after this, following the code returns 410 Gone</p>
+            <p class="mt-2"><span class="text-ink-mute">follows before expiry</span>: <span class="text-accent-strong">302 → original URL</span></p>
+            <p class="text-ink-mute">// follow after expiry: marked expired in your dashboard</p>
+          </div>
+        </div>
+
+        <div class="card grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
+          <div>
+            <span class="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent-strong">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+                <path d="M3 21h18" />
+                <path d="M5 21V7l7-4 7 4v14" />
+                <path d="M9 9h1" />
+                <path d="M9 13h1" />
+                <path d="M14 9h1" />
+                <path d="M14 13h1" />
+                <path d="M10 21v-4h4v4" />
+              </svg>
+            </span>
+            <h2 class="mt-4 text-lg font-bold">Your links, saved</h2>
+            <p class="mt-2 text-[14px] leading-relaxed text-ink-soft">
+              Create a free account and every link you shorten lands in your own
+              dashboard. Copy, open, or clean them up from one screen.
+            </p>
+          </div>
+          <div class="rounded-lg border border-line bg-surface-2/60 p-4 font-mono text-[12px] leading-7">
+            <p class="text-ink-mute">// your dashboard</p>
+            <p><span class="text-accent-strong">knot.to/abcd12</span> <span class="text-ink-mute">→ example.com/docs …exp 12 Sep</span></p>
+            <p><span class="text-accent-strong">knot.to/blog</span> <span class="text-ink-mute">→ example.com/blog …exp 02 Aug</span></p>
+            <p class="mt-2 text-ink-mute">// copy · open · delete</p>
+          </div>
+        </div>
+
+        <div class="card grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
+          <div>
+            <span class="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent-strong">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+                <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+            </span>
+            <h2 class="mt-4 text-lg font-bold">Fast redirects</h2>
+            <p class="mt-2 text-[14px] leading-relaxed text-ink-soft">
+              Following a short link is a single HTTP 302 to the destination.
+              No click-tracking interstitials, no waiting screens, nothing in the way.
+            </p>
+          </div>
+          <div class="rounded-lg border border-line bg-surface-2/60 p-4 font-mono text-[12px] leading-7">
+            <p class="text-ink-mute">$ curl -I https://knot.to/abcd12</p>
+            <p class="text-ink-mute">HTTP/1.1 <span class="text-accent-strong">302 Found</span></p>
+            <p class="text-ink-mute">Location: <span class="text-accent-strong">https://example.com/…</span></p>
+            <p class="text-ink-mute">// that’s it — straight to your link</p>
+          </div>
+        </div>
+
+        <div class="card grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
+          <div>
+            <span class="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent-strong">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+                <path d="M3 6h18" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+            </span>
+            <h2 class="mt-4 text-lg font-bold">Delete &amp; manage</h2>
+            <p class="mt-2 text-[14px] leading-relaxed text-ink-soft">
+              Unwanted or expired links disappear in one click. Deleting a link
+              also removes its short code, so it stops resolving immediately.
+            </p>
+          </div>
+          <div class="rounded-lg border border-line bg-surface-2/60 p-4 font-mono text-[12px] leading-7">
+            <p class="text-ink-mute">DELETE /api/links/:id</p>
+            <p class="text-ink-mute">→ <span class="text-accent-strong">200 "Link deleted successfully"</span></p>
+            <p class="text-ink-mute">// the code no longer resolves</p>
+            <p class="text-ink-mute">// unauthenticated delete is rejected with 401</p>
+          </div>
+        </div>
+
+        <div class="card grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:items-center">
+          <div>
+            <span class="flex size-10 items-center justify-center rounded-lg bg-accent-soft text-accent-strong">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+                <rect x="3" y="11" width="18" height="11" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </span>
+            <h2 class="mt-4 text-lg font-bold">Private by default</h2>
+            <p class="mt-2 text-[14px] leading-relaxed text-ink-soft">
+              Links created while signed in belong to your account and are listed
+              only for you. Nothing is public, nothing is shared, nothing leaks
+              back to us.
+            </p>
+          </div>
+          <div class="rounded-lg border border-line bg-surface-2/60 p-4 font-mono text-[12px] leading-7">
+            <p class="text-ink-mute">// ownership is enforced server-side</p>
+            <p><span class="text-ink-mute">user_id</span>: <span class="text-accent-strong">from JWT, never from the client</span></p>
+            <p class="text-ink-mute">// your links list only ever returns your own rows</p>
+            <p class="text-ink-mute">// no analytics, no tracking pixels, no cookies from us</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="pb-24">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6">
+          <div class="card relative overflow-hidden p-10 text-center sm:p-14">
+            <h2 class="display mx-auto max-w-xl text-balance text-3xl sm:text-4xl">
+              Shorten your first link. It takes seconds.
+            </h2>
+            <div class="mt-8 flex flex-wrap justify-center gap-3">
+              <a href="/app" class="btn-primary h-10 px-5 text-sm">Open the app</a>
+              <a href="/" class="btn-ghost h-10 px-5 text-sm">Back to home</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-line">
+      <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+        <div>
+          <a href="/" class="mark" aria-label="Knot home">
+            <span class="mark-mark">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden>
+                <path d="M9.5 14.5 8 16a3 3 0 1 1-4.24-4.24L7 8.5a3 3 0 0 1 4.24 0" />
+                <path d="M14.5 9.5 16 8a3 3 0 1 1 4.24 4.24L17 15.5a3 3 0 0 1-4.24 0" />
+              </svg>
+            </span>
+            knot
+          </a>
+          <p class="mt-3 max-w-xs text-[13px] leading-relaxed text-ink-mute">
+            A fast, self-hosted URL shortener. Short links that hold — no ads,
+            no tracking pixels, no bloat.
+          </p>
+        </div>
+
+        <div>
+          <p class="text-[11px] font-semibold tracking-wide text-ink-mute uppercase">Product</p>
+          <div class="mt-3">
+            <a class="footer-link" href="/#how">How it works</a>
+            <a class="footer-link" href="/#features">Features</a>
+            <a class="footer-link" href="/#app">The app</a>
+            <a class="footer-link" href="/app">Open app</a>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[11px] font-semibold tracking-wide text-ink-mute uppercase">Resources</p>
+          <div class="mt-3">
+            <a class="footer-link" href="/llms.txt">For AI agents — llms.txt</a>
+            <a class="footer-link" href="/sitemap.xml">Sitemap</a>
+            <a class="footer-link" href="/404">A friendly 404</a>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[11px] font-semibold tracking-wide text-ink-mute uppercase">Status</p>
+          <div class="mt-3">
+            <a class="footer-link" href="/api/links/health">API health</a>
+            <a class="footer-link" href="/api">API root</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-line">
+        <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-5 text-xs text-ink-mute sm:px-6">
+          <p>© <span id="year">2026</span> Knot. Short links that hold.</p>
+          <p class="font-mono">Express · PostgreSQL · React</p>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/marketing/main.ts"></script>
+  </body>
+</html>

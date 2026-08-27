@@ -1,0 +1,201 @@
+/* ============================================================
+   Knot — design tokens
+   Semantic tokens map to values that flip via .dark on <html>.
+   Shared by the marketing site (marketing.css) and the app
+   (index.css). Both entries `@import "tailwindcss"` first,
+   then this file, so `@theme` here extends Tailwind's theme.
+   ============================================================ */
+
+/* Self-hosted fonts — latin subset only, copied into public/fonts */
+@font-face {
+  font-family: "Inter Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("/fonts/inter-latin-wght-normal.woff2") format("woff2-variations");
+}
+
+@font-face {
+  font-family: "Space Grotesk Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url("/fonts/space-grotesk-latin-wght-normal.woff2")
+    format("woff2-variations");
+}
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --font-display: "Space Grotesk Variable", "Inter Variable", ui-sans-serif,
+    system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  /* Semantic tokens — value flips via .dark on <html> */
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-mute: var(--ink-mute);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-danger: var(--danger);
+  --color-danger-strong: var(--danger-strong);
+  --color-danger-soft: var(--danger-soft);
+  --color-overlay: var(--overlay);
+}
+
+:root {
+  /* Neutrals — neutral-cool, developer-tool warmth kept out */
+  --page: #f7f7f8;
+  --surface: #ffffff;
+  --surface-2: #f1f1f3;
+  --surface-hover: #f6f6f8;
+  --surface-raised: #ffffff;
+  --ink: #17171b;
+  --ink-soft: #45454d;
+  --ink-mute: #71717a;
+  --line: #e4e4e9;
+  --line-strong: #d3d3da;
+
+  /* Accent — "vine", a deep pine green */
+  --accent: #0e7a5b;
+  --accent-strong: #0a5f47;
+  --accent-soft: #e6f2ec;
+  --accent-contrast: #ffffff;
+
+  --danger: #d63c3c;
+  --danger-strong: #b3261e;
+  --danger-soft: #fdecec;
+  --overlay: rgb(23 23 27 / 0.45);
+
+  color-scheme: light;
+}
+
+.dark {
+  --page: #101013;
+  --surface: #1a1a1e;
+  --surface-2: #222227;
+  --surface-hover: #202025;
+  --surface-raised: #242429;
+  --ink: #ececef;
+  --ink-soft: #b7b7bf;
+  --ink-mute: #85858e;
+  --line: #2b2b31;
+  --line-strong: #3c3c44;
+
+  --accent: #2fbf92;
+  --accent-strong: #5bd4ae;
+  --accent-soft: #14332a;
+  --accent-contrast: #06251c;
+
+  --danger: #f1655f;
+  --danger-strong: #ff8278;
+  --danger-soft: #3a1d1d;
+  --overlay: rgb(8 8 10 / 0.6);
+
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-page font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    @apply bg-accent-soft text-accent-strong;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-lg border border-line bg-surface;
+  }
+  .mark {
+    @apply inline-flex items-center gap-2 font-display text-lg leading-none font-bold tracking-tight text-ink;
+  }
+  .mark-mark {
+    @apply inline-flex h-7 w-7 items-center justify-center rounded-md bg-accent text-accent-contrast shadow-sm;
+  }
+  .display {
+    @apply font-display font-bold tracking-tight;
+  }
+  .btn-primary {
+    @apply inline-flex h-8 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-accent px-3 text-[13px] font-semibold text-accent-contrast transition select-none hover:bg-accent-strong focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+  }
+  .btn-ghost {
+    @apply inline-flex h-8 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-line bg-surface px-3 text-[13px] font-semibold text-ink-soft transition select-none hover:border-line-strong hover:text-ink focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-quiet {
+    @apply inline-flex h-7 cursor-pointer items-center justify-center gap-1.5 rounded-md px-2 text-[13px] font-medium text-ink-mute transition select-none hover:bg-surface-2 hover:text-ink focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .field {
+    @apply w-full rounded-md border border-line bg-surface px-3 text-sm text-ink transition placeholder:text-ink-mute/60 focus:border-accent focus:ring-2 focus:ring-accent/25 focus:outline-none;
+  }
+  .label {
+    @apply mb-1.5 block text-[11px] font-semibold tracking-wide text-ink-mute uppercase;
+  }
+  .kbd {
+    @apply inline-flex items-center rounded border border-line bg-surface-2 px-1.5 py-0.5 font-mono text-[10px] text-ink-mute;
+  }
+}
+
+@layer utilities {
+  .animate-rise {
+    animation: rise 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .animate-fade {
+    animation: fade 0.18s ease-out both;
+  }
+  .animate-pop {
+    animation: pop 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-fade,
+  .animate-pop {
+    animation: none;
+  }
+}

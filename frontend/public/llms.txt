@@ -1,0 +1,46 @@
+# Knot
+
+> Short links that hold. A fast, self-hosted URL shortener.
+
+## About
+
+Knot shortens long URLs into short ones you can share without paste-noise. It
+offers custom aliases, auto-expiry (30 days by default), and a small dashboard
+where signed-in users can copy, open, and delete the links they own. There are
+no ads, no tracking pixels, and no analytics.
+
+Stack: Express + PostgreSQL (backend, JWT auth), React + Tailwind CSS (frontend).
+
+## Pages
+
+- https://knot.to/ — Marketing homepage with a working shortener demo.
+- https://knot.to/features — Feature details.
+- https://knot.to/app — The app (shorten, aliases, link management). Requires JS; sign-in for saved links.
+- https://knot.to/404 — A friendly 404 page (also served for dead short links).
+
+## Key facts
+
+- Creating a short link does not require an account. Signing in is only needed
+  to have links saved to your account.
+- Short links expire 30 days after creation by default (expires_at).
+- Following a short link issues a 302 redirect to the destination URL.
+- Custom aliases must be 3–32 characters: letters, numbers, "-" and "_".
+- The app is a single page under /app; its route is public but the dashboard
+  content is private per account.
+
+## API (JSON, same origin)
+
+- GET  /api — API root (text listing available endpoints).
+- GET  /api/links/health — health check.
+- POST /api/links/ — create a short link. Body: { url, custom_alias? }.
+- POST /api/auth/register — create account. Body: { name, email, password }.
+- POST /api/auth/login — sign in (sets a cookie).
+- POST /api/auth/logout — sign out.
+- GET  /api/links/my-links — signed-in user's links.
+- DELETE /api/links/:id — delete one of your links.
+
+## Documentation
+
+- Setup and run instructions: see the README in the source repository you
+  obtained this site from (backend/ and frontend/ live in one repo).
+- HTTP reference: open the /api root endpoint.

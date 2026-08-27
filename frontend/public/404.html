@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Not found — Knot</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#f7f7f8" />
+    <style>
+      :root {
+        --page: #f7f7f8;
+        --surface: #ffffff;
+        --ink: #17171b;
+        --ink-soft: #45454d;
+        --ink-mute: #71717a;
+        --line: #e4e4e9;
+        --accent: #0e7a5b;
+        --accent-strong: #0a5f47;
+        --accent-soft: #e6f2ec;
+      }
+      .dark {
+        --page: #101013;
+        --surface: #1a1a1e;
+        --ink: #ececef;
+        --ink-soft: #b7b7bf;
+        --ink-mute: #85858e;
+        --line: #2b2b31;
+        --accent: #2fbf92;
+        --accent-strong: #5bd4ae;
+        --accent-soft: #14332a;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        background: var(--page);
+        color: var(--ink);
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .card {
+        max-width: 26rem;
+        margin: 1.5rem;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+      }
+      .mark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.625rem;
+        background: var(--accent);
+        color: var(--page);
+      }
+      .code {
+        margin: 1.25rem 0 0;
+        font-size: 0.875rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+      .code span {
+        color: var(--accent-strong);
+      }
+      h1 {
+        margin: 0.25rem 0 0;
+        font-size: 1.25rem;
+        line-height: 1.3;
+      }
+      p {
+        margin: 0.75rem 0 0;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        color: var(--ink-soft);
+      }
+      .actions {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 0.625rem;
+        justify-content: center;
+      }
+      a.btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 2.25rem;
+        padding: 0 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      a.primary {
+        background: var(--accent);
+        color: var(--page);
+      }
+      a.ghost {
+        border: 1px solid var(--line);
+        color: var(--ink-soft);
+      }
+      #reason {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <span class="mark" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.5 14.5 8 16a3 3 0 1 1-4.24-4.24L7 8.5a3 3 0 0 1 4.24 0" />
+          <path d="M14.5 9.5 16 8a3 3 0 1 1 4.24 4.24L17 15.5a3 3 0 0 1-4.24 0" />
+        </svg>
+      </span>
+      <p class="code">404 <span>—</span> page not found</p>
+      <h1>That link came loose.</h1>
+      <p id="reason">It might have expired, been deleted, or never existed.</p>
+      <p>
+        Head back to the app and shorten a new one — it only takes a second.
+      </p>
+      <div class="actions">
+        <a class="btn primary" href="/app">Open the app</a>
+        <a class="btn ghost" href="/">Back home</a>
+      </div>
+    </div>
+    <script>
+      document.documentElement.classList.toggle(
+        "dark",
+        localStorage.getItem("shrt.theme") === "dark" ||
+          (!localStorage.getItem("shrt.theme") &&
+            matchMedia("(prefers-color-scheme: dark)").matches),
+      );
+      const reason = new URLSearchParams(location.search).get("reason");
+      if (reason === "expired") {
+        document.getElementById("reason").textContent =
+          "This link has expired and is no longer available.";
+      }
+      document.getElementById("reason").style.display = "block";
+    </script>
+  </body>
+</html>

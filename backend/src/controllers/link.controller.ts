@@ -77,13 +77,11 @@ export async function redirectToOriginalUrlController(
     const link = await getOriginalUrlByCode(safeCode);
 
     if (!link) {
-      return res
-        .status(404)
-        .send("<h1>URL Not Found</h1><p>This short link does not exist.</p>");
+      return res.redirect(302, "/404");
     }
 
     if (link.expires_at && new Date() > link.expires_at) {
-      return res.status(410).send("<h1>This link has expired</h1>");
+      return res.redirect(302, "/404?reason=expired");
     }
     return res.redirect(302, link.original_url);
   } catch (error) {
