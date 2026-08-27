@@ -7,9 +7,9 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { User } from "../types";
 
-const STORAGE_KEY = "shrt.user";
+import type { User } from "../types";
+import { api } from "../lib/api";
 
 interface AuthContextValue {
   user: User | null;
@@ -19,50 +19,49 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function readStoredUser(): User | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as User;
-    if (!parsed || typeof parsed.id !== "string") return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUserState] = useState<User | null>(() => readStoredUser());
+  const [user, setUserState] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
 
+  // Restore the existing session when the app starts
   useEffect(() => {
-    setReady(true);
+    const restoreSession = async () => {
+      try {
+        const user = await api.me();
+        console.log(user);
+        setUserState(user);
+      } catch {
+        setUserState(null);
+      } finally {
+        setReady(true);
+      }
+    };
+
+    restoreSession();
   }, []);
 
   const setUser = useCallback((next: User | null) => {
     setUserState(next);
-    if (next) {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch {
-        /* storage unavailable */
-      }
-    } else {
-      try {
-        localStorage.removeItem(STORAGE_KEY);
-      } catch {
-        /* storage unavailable */
-      }
-    }
   }, []);
 
-  const value = useMemo(() => ({ user, ready, setUser }), [user, ready, setUser]);
+  const value = useMemo(
+    () => ({
+      user,
+      ready,
+      setUser,
+    }),
+    [user, ready, setUser],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+
+  if (!ctx) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+
   return ctx;
 }

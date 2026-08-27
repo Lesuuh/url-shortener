@@ -1,3 +1,5 @@
+import { User } from "../types";
+
 export class ApiError extends Error {
   status: number;
   fields?: Record<string, string>;
@@ -18,6 +20,9 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
 }
 
+interface MeResponse {
+  user: User;
+}
 async function request<T>(
   path: string,
   options: RequestOptions = {},
@@ -82,10 +87,12 @@ export const api = {
       body: { email, password },
     }),
 
-  me: () => {
-    return request<import("../types").User>("/auth/me", {
+  me: async (): Promise<User> => {
+    const response = await request<MeResponse>("/auth/me", {
       method: "GET",
     });
+
+    return response.user;
   },
 
   logout: () =>
