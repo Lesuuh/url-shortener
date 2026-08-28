@@ -100,9 +100,21 @@ export async function meController(req: any, res: Response) {
 }
 
 export async function DeleteAccountController(req: any, res: Response) {
-  const user_id = req.userId;
-  deleteAccount(user_id);
-  res.json({ message: "Account deleted successfully" });
+  const user_id = req.user_id;
+
+  try {
+    await deleteAccount(user_id);
+
+    return res.status(200).json({
+      message: "Account deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete account error:", error);
+
+    return res.status(500).json({
+      message: "Failed to delete account",
+    });
+  }
 }
 
 export async function LogoutAllController(req: any, res: Response) {

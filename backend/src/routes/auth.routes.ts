@@ -21,6 +21,6 @@ router.get("/me", requireAuth, meController);
 router.post("/logout-all", requireAuth, LogoutAllController);
 router.patch("/change-password", requireAuth, ChangePasswordController);
 router.patch("/me", requireAuth, updateUserController);
-router.delete("/me", requireAuth, DeleteAccountController);
+router.delete("/delete-account", requireAuth, DeleteAccountController);
 
 export default router;

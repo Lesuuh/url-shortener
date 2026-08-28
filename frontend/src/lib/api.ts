@@ -131,7 +131,7 @@ export const api = {
     }),
 
   deleteAccount: () =>
-    request<{ message: string }>("/users/me", { method: "DELETE" }),
+    request<{ message: string }>("/auth/delete-account", { method: "DELETE" }),
 
   createLink: (url: string, customAlias?: string) =>
     request<import("../types").CreateLinkResponse>("/links/", {
