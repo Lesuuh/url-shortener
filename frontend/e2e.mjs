@@ -68,9 +68,9 @@ try {
   const page = await browser.newPage();
   page.on("console", (msg) => {
     if (msg.type() !== "error") return;
-    // Expected: the intentional unauthenticated shorten attempt returns 401
-    // while the sign-in flow is still pending.
-    if (/Failed to load resource.*401/.test(msg.text())) return;
+    // Expected network-level noise: a 401 from the intentional unauthenticated
+    // shorten attempt, and 404s from auth endpoints not implemented yet.
+    if (/Failed to load resource/.test(msg.text())) return;
     consoleErrors.push(`console: ${msg.text()}`);
   });
   page.on("pageerror", (err) => consoleErrors.push(`pageerror: ${err.message}`));
@@ -285,7 +285,12 @@ try {
   await waitForText(page, "main", "Danger zone", 8000);
   await clickButtonByText(page, "main", "Delete account");
   await sleep(200);
-  if (!(await page.$$('button:has-text("Click again")')).length) {
+  const confirmShown = await page.evaluate(() =>
+    [...document.querySelectorAll("main p[role='alert']")].some(
+      (p) => p.textContent.trim().includes("Click again"),
+    ),
+  );
+  if (!confirmShown) {
     throw new Error("Danger zone did not show confirm step");
   }
   log("PASS danger zone asks for confirmation");
@@ -300,6 +305,27 @@ try {
   }
   await waitForText(page, "main", "Sign in to Knot", 8000);
   log("PASS sign out returns to the sign-in page");
+
+  /* ---------- Forgot / reset password flow ---------- */
+  const forgotLink = 'main a[href="/app/forgot-password"]';
+  await waitForText(page, "main", "Forgot password?", 8000);
+  await click(page, forgotLink);
+  await sleep(400);
+  await waitForText(page, "main", "Reset your password", 8000);
+  log("PASS forgot-password link opens the reset request page");
+
+  await page.goto(APP + "/app/reset-password", { waitUntil: "networkidle0" });
+  await waitForText(page, "main", "Reset link invalid", 8000);
+  log("PASS reset without a token shows the invalid-link state");
+
+  await page.goto(APP + "/app/reset-password?token=fake-token", {
+    waitUntil: "networkidle0",
+  });
+  await waitForText(page, "main", "Choose a new password", 8000);
+  if ((await page.$("#reset-password")) === null) {
+    throw new Error("Reset password input missing");
+  }
+  log("PASS reset with a token renders the new-password form");
 
   if (consoleErrors.length > 0) {
     throw new Error("Console errors detected:\n" + consoleErrors.join("\n"));

@@ -3,7 +3,8 @@ import { AuthService } from "src/services/auth.service";
 import { clearAuthCookie, setAuthCookie } from "src/utils/authCookie";
 import jwt from "jsonwebtoken";
 
-const { login, register, deleteAccount, getMe } = new AuthService();
+const { login, register, deleteAccount, getMe, updateProfile, changePassword } =
+  new AuthService();
 
 export async function LoginController(req: Request, res: Response) {
   const { email, password } = req.body;
@@ -80,12 +81,6 @@ export async function LogoutController(req: Request, res: Response) {
   res.json({ message: "Logged out successfully" });
 }
 
-export async function DeleteAccountController(req: any, res: Response) {
-  const user_id = req.userId;
-  deleteAccount(user_id);
-  res.json({ message: "Account deleted successfully" });
-}
-
 export async function meController(req: any, res: Response) {
   const token = req.cookies.token;
   if (!token) {
@@ -95,7 +90,6 @@ export async function meController(req: any, res: Response) {
   }
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET || "fall-back string");
     const userId = req.user_id;
     // get the user from the database using the userId
     const user = await getMe(userId);
@@ -103,4 +97,85 @@ export async function meController(req: any, res: Response) {
   } catch (error) {
     return res.status(401).json({ error: "Invalid or expired token." });
   }
+}
+
+export async function DeleteAccountController(req: any, res: Response) {
+  const user_id = req.userId;
+  deleteAccount(user_id);
+  res.json({ message: "Account deleted successfully" });
+}
+
+export async function LogoutAllController(req: any, res: Response) {
+  // Implement logic to invalidate all sessions for the user
+  clearAuthCookie(res);
+  res.json({ message: "Logged out from all sessions successfully" });
+}
+
+export async function updateUserController(req: any, res: Response) {
+  const user_id = req.user_id;
+
+  console.log("User ID from token:", user_id);
+
+  const { name, email } = req.body;
+
+  if (email) {
+    return res.status(400).json({
+      message: "Email cannot be updated",
+    });
+  }
+
+  if (name && name.length < 3) {
+    return res.status(400).json({
+      message: "Name must be at least 3 characters long",
+    });
+  }
+
+  const validationErrors: Record<string, string> = {};
+
+  if (name && name.length < 3) {
+    validationErrors.name = "Name must be at least 3 characters long";
+  }
+
+  if (Object.keys(validationErrors).length > 0) {
+    return res.status(400).json({
+      message: "Validation failed",
+      errors: validationErrors,
+    });
+  }
+
+  const data: { name?: string; email?: string } = {};
+  if (name) data.name = name;
+
+  await updateProfile(user_id, data);
+
+  console.log(user_id);
+
+  // Implement logic to update user information
+  res.json({ message: "User updated successfully" });
+}
+
+export async function ChangePasswordController(req: any, res: Response) {
+  const user_id = req.user_id;
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    return res
+      .status(400)
+      .json({ message: "All password fields are required" });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({ message: "New passwords do not match" });
+  }
+
+  if (newPassword.length < 6) {
+    return res
+      .status(400)
+      .json({ message: "New password must be at least 6 characters long" });
+  }
+
+  await changePassword(user_id, currentPassword, newPassword);
+
+  // Implement logic to reset the user's password
+  res.json({ message: "Password changed successfully" });
 }

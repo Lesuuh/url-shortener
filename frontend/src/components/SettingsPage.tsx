@@ -92,7 +92,10 @@ function ProfileCard({ name, email }: { name: string; email: string }) {
     setSaving(true);
     setError(null);
     try {
-      const updated = await api.updateProfile({ name: nameValue, email: emailValue });
+      const updated = await api.updateProfile({
+        name: nameValue,
+        email: emailValue,
+      });
       setUser(updated);
       toast("Profile saved");
     } catch (err) {
@@ -112,7 +115,7 @@ function ProfileCard({ name, email }: { name: string; email: string }) {
           </label>
           <input
             id="profile-name"
-            className="field"
+            className="field py-2"
             value={nameValue}
             onChange={(e) => setNameValue(e.target.value)}
             minLength={3}
@@ -125,9 +128,10 @@ function ProfileCard({ name, email }: { name: string; email: string }) {
           <input
             id="profile-email"
             type="email"
-            className="field"
+            className="field py-2"
             value={emailValue}
             onChange={(e) => setEmailValue(e.target.value)}
+            readOnly
           />
         </div>
         {error && (

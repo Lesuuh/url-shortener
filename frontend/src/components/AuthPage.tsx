@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router";
 import { api, ApiError } from "../lib/api";
 import { useTheme } from "../theme";
 import type { User } from "../types";
@@ -207,9 +208,19 @@ export function AuthPage({
               </div>
 
               <div>
-                <label htmlFor="auth-password" className="label">
-                  Password
-                </label>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="auth-password" className="label">
+                    Password
+                  </label>
+                  {mode === "login" && (
+                    <Link
+                      to="/forgot-password"
+                      className="text-xs font-medium text-ink-mute underline-offset-2 hover:text-ink hover:underline"
+                    >
+                      Forgot password?
+                    </Link>
+                  )}
+                </div>
                 <input
                   id="auth-password"
                   type="password"

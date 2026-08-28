@@ -105,4 +105,54 @@ export class AuthService {
     }
     return user;
   }
+
+  async updateProfile(
+    user_id: string,
+    data: { name?: string; email?: string },
+  ): Promise<User> {
+    if (!user_id) {
+      throw new Error("Invalid user");
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: user_id },
+      data: data,
+    });
+
+    return updatedUser;
+  }
+
+  async changePassword(
+    user_id: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    if (!user_id) {
+      throw new Error("Invalid user");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: user_id },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password_hash,
+    );
+
+    if (!isPasswordValid) {
+      throw new Error("Current password is incorrect");
+    }
+
+    const hashNewPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: user_id },
+      data: { password_hash: hashNewPassword },
+    });
+  }
 }

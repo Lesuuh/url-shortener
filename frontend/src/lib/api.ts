@@ -95,6 +95,18 @@ export const api = {
     return response.user;
   },
 
+  forgotPassword: (email: string) =>
+    request<{ message: string }>("/forgot-password", {
+      method: "POST",
+      body: { email },
+    }),
+
+  resetPassword: (token: string, newPassword: string) =>
+    request<{ message: string }>("/reset-password", {
+      method: "POST",
+      body: { token, new_password: newPassword },
+    }),
+
   logout: () =>
     request<{ message: string }>("/auth/logout", { method: "POST" }),
 

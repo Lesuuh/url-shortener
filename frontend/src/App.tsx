@@ -7,7 +7,9 @@ import {
 } from "react-router";
 import { AuthPage } from "./components/AuthPage";
 import { Dashboard } from "./components/Dashboard";
+import { ForgotPasswordPage } from "./components/ForgotPasswordPage";
 import { RequireAuth } from "./components/RequireAuth";
+import { ResetPasswordPage } from "./components/ResetPasswordPage";
 import { SettingsPage } from "./components/SettingsPage";
 import { ToastProvider, useToast } from "./components/Toast";
 import { AuthProvider, useAuth } from "./context/auth";
@@ -58,6 +60,8 @@ export default function App() {
       <ToastProvider>
         <Routes>
           <Route path="/login" element={<LoginRoute />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route element={<RequireAuth />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/settings" element={<SettingsPage />} />
