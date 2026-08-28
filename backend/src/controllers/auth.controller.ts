@@ -156,16 +156,13 @@ export async function updateUserController(req: any, res: Response) {
 
 export async function ChangePasswordController(req: any, res: Response) {
   const user_id = req.user_id;
-  const { currentPassword, newPassword, confirmPassword } = req.body;
+  const { currentPassword, newPassword } = req.body;
+  console.log(req.body);
 
-  if (!currentPassword || !newPassword || !confirmPassword) {
+  if (!currentPassword || !newPassword) {
     return res
       .status(400)
       .json({ message: "All password fields are required" });
-  }
-
-  if (newPassword !== confirmPassword) {
-    return res.status(400).json({ message: "New passwords do not match" });
   }
 
   if (newPassword.length < 6) {
@@ -173,9 +170,21 @@ export async function ChangePasswordController(req: any, res: Response) {
       .status(400)
       .json({ message: "New password must be at least 6 characters long" });
   }
+  try {
+    await changePassword(user_id, currentPassword, newPassword);
 
-  await changePassword(user_id, currentPassword, newPassword);
+    return res.status(200).json({
+      message: "Password updated successfully.",
+    });
+  } catch (error: any) {
+    if (error.message === "Current password is incorrect") {
+      return res.status(401).json({
+        message: error.message,
+      });
+    }
 
-  // Implement logic to reset the user's password
-  res.json({ message: "Password changed successfully" });
+    return res.status(500).json({
+      message: "Unable to change password.",
+    });
+  }
 }

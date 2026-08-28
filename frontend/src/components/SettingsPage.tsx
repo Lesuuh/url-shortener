@@ -165,8 +165,8 @@ function PasswordCard() {
       setError("Passwords don't match.");
       return;
     }
-    if (next.length < 8) {
-      setError("New password must be at least 8 characters.");
+    if (next.length < 6) {
+      setError("New password must be at least 6 characters.");
       return;
     }
     setSaving(true);
@@ -213,7 +213,7 @@ function PasswordCard() {
               className="field py-2"
               value={next}
               onChange={(e) => setNext(e.target.value)}
-              minLength={8}
+              minLength={6}
             />
           </div>
           <div>
@@ -248,59 +248,150 @@ function PasswordCard() {
 
 function DangerCard({ onNeedAuth }: { onNeedAuth: () => void }) {
   const { setUser } = useAuth();
+
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const run = async () => {
-    if (!confirming) {
-      setConfirming(true);
-      return;
-    }
+  const runDelete = async () => {
     setBusy(true);
     setError(null);
+
     try {
       await api.deleteAccount();
+
       try {
         await api.logout();
       } catch {
-        /* server already dropped the session */
+        // Account/session already removed
       }
+
       setUser(null);
       window.location.replace("/app/login");
     } catch (err) {
       setError(errorMessage(err));
-      if (err instanceof ApiError && err.status === 401) onNeedAuth();
+
+      if (err instanceof ApiError && err.status === 401) {
+        setConfirming(false);
+        onNeedAuth();
+      }
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <section className="card border-danger/30 p-5">
-      <h2 className="label mb-1 text-danger-strong">Danger zone</h2>
-      <p className="text-[13px] text-ink-mute">
-        This permanently closes your account and deletes all your links.
-      </p>
+    <>
+      <section className="card border-danger/30 p-5">
+        <h2 className="label mb-1 text-danger-strong">Danger zone</h2>
+
+        <p className="text-[13px] text-ink-mute">
+          This permanently closes your account and deletes all your links.
+        </p>
+
+        {error && (
+          <p role="alert" className="mt-2 text-[13px] text-danger-strong">
+            {error}
+          </p>
+        )}
+
+        <button
+          type="button"
+          onClick={() => {
+            setError(null);
+            setConfirming(true);
+          }}
+          disabled={busy}
+          className="btn-quiet mt-3 w-full justify-center hover:bg-danger/10 hover:text-danger-strong disabled:opacity-50"
+        >
+          Delete account
+        </button>
+      </section>
+
       {confirming && (
-        <p role="alert" className="mt-2 text-[13px] text-danger-strong">
-          Really? Everything is wiped. Click again to confirm.
-        </p>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          role="presentation"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget && !busy) {
+              setConfirming(false);
+            }
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-account-title"
+            aria-describedby="delete-account-description"
+            className="card w-full max-w-md p-6 shadow-xl"
+          >
+            <div className="flex size-10 items-center justify-center rounded-full bg-danger/10 text-danger-strong">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 6h18" />
+                <path d="M8 6V4h8v2" />
+                <path d="M19 6l-1 14H6L5 6" />
+                <path d="M10 11v5" />
+                <path d="M14 11v5" />
+              </svg>
+            </div>
+
+            <h2
+              id="delete-account-title"
+              className="mt-4 text-lg font-bold tracking-tight"
+            >
+              Delete your account?
+            </h2>
+
+            <p
+              id="delete-account-description"
+              className="mt-2 text-sm leading-relaxed text-ink-soft"
+            >
+              This will permanently delete your account and all of your
+              shortened links. This action cannot be undone.
+            </p>
+
+            {error && (
+              <p
+                role="alert"
+                className="mt-3 rounded-md bg-danger/10 px-3 py-2 text-sm text-danger-strong"
+              >
+                {error}
+              </p>
+            )}
+
+            <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => setConfirming(false)}
+                className="btn-ghost h-10 px-4"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                disabled={busy}
+                onClick={() => void runDelete()}
+                className="btn-primary h-10 bg-danger-strong px-4 text-white hover:opacity-90 disabled:opacity-50"
+              >
+                {busy ? "Deleting…" : "Yes, delete account"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
-      {error && (
-        <p role="alert" className="mt-2 text-[13px] text-danger-strong">
-          {error}
-        </p>
-      )}
-      <button
-        type="button"
-        onClick={() => void run()}
-        disabled={busy}
-        className="btn-quiet mt-3 w-full justify-center hover:bg-danger/10 hover:text-danger-strong disabled:opacity-50"
-      >
-        {busy ? "Deleting…" : "Delete account"}
-      </button>
-    </section>
+    </>
   );
 }
 

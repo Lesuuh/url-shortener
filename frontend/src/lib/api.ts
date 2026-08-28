@@ -121,13 +121,13 @@ export const api = {
     return response.user;
   },
 
-  changePassword: (data: {
-    currentPassword: string;
-    newPassword: string;
-  }) =>
-    request<{ message: string }>("/auth/password", {
-      method: "POST",
-      body: { current_password: data.currentPassword, new_password: data.newPassword },
+  changePassword: (data: { currentPassword: string; newPassword: string }) =>
+    request<{ message: string }>("/auth/change-password", {
+      method: "PATCH",
+      body: {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      },
     }),
 
   deleteAccount: () =>

@@ -19,7 +19,7 @@ router.post("/logout", LogoutController);
 router.get("/me", requireAuth, meController);
 
 router.post("/logout-all", requireAuth, LogoutAllController);
-router.patch("/me/change-password", requireAuth, ChangePasswordController);
+router.patch("/change-password", requireAuth, ChangePasswordController);
 router.patch("/me", requireAuth, updateUserController);
 router.delete("/me", requireAuth, DeleteAccountController);
 
