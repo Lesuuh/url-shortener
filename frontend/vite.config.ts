@@ -22,8 +22,28 @@ function injectSiteEnv(): Plugin {
   };
 }
 
+/**
+ * In dev, Vite's history fallback serves index.html (the marketing page) for
+ * every unknown path, so /app/* SPA routes never mount app.html. Rewrites any
+ * /app request to app.html so the React Router app boots. The built app doesn't
+ * need this — backend/src/app.ts handles /app/* itself.
+ */
+function serveAppShell(): Plugin {
+  return {
+    name: "knot-serve-app-shell",
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        if (req.url && req.url.startsWith("/app")) {
+          req.url = "/app.html";
+        }
+        next();
+      });
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react(), tailwindcss(), injectSiteEnv()],
+  plugins: [react(), tailwindcss(), injectSiteEnv(), serveAppShell()],
   server: {
     port: 5173,
     proxy: {

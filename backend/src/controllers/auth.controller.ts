@@ -3,8 +3,15 @@ import { AuthService } from "src/services/auth.service";
 import { clearAuthCookie, setAuthCookie } from "src/utils/authCookie";
 import jwt from "jsonwebtoken";
 
-const { login, register, deleteAccount, getMe, updateProfile, changePassword } =
-  new AuthService();
+const {
+  login,
+  register,
+  deleteAccount,
+  getMe,
+  updateProfile,
+  changePassword,
+  forgotPassword,
+} = new AuthService();
 
 export async function LoginController(req: Request, res: Response) {
   const { email, password } = req.body;
@@ -117,12 +124,6 @@ export async function DeleteAccountController(req: any, res: Response) {
   }
 }
 
-export async function LogoutAllController(req: any, res: Response) {
-  // Implement logic to invalidate all sessions for the user
-  clearAuthCookie(res);
-  res.json({ message: "Logged out from all sessions successfully" });
-}
-
 export async function updateUserController(req: any, res: Response) {
   const user_id = req.user_id;
 
@@ -199,4 +200,36 @@ export async function ChangePasswordController(req: any, res: Response) {
       message: "Unable to change password.",
     });
   }
+}
+
+export async function LogoutAllController(req: any, res: Response) {
+  // Implement logic to invalidate all sessions for the user
+  clearAuthCookie(res);
+  res.json({ message: "Logged out from all sessions successfully" });
+}
+
+export const ForgotPasswordController = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    const baseUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    await forgotPassword(email, baseUrl);
+
+    return res.status(200).json({
+      message:
+        "If an account with that email exists, we have sent a password reset link.",
+    });
+  } catch (error) {
+    // Log actual internal error on your server
+    console.error("Password reset request error:", error);
+
+    return res.status(500).json({
+      error: "An unexpected error occurred. Please try again later.",
+    });
+  }
+};
+
+export async function PasswordResetController(req: Request, res: Response) {
+  // Implement logic to reset the user's password
+  res.json({ message: "Password reset functionality is not implemented yet" });
 }

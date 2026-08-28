@@ -96,7 +96,7 @@ export const api = {
   },
 
   forgotPassword: (email: string) =>
-    request<{ message: string }>("/forgot-password", {
+    request<{ message: string }>("/auth/forgot-password", {
       method: "POST",
       body: { email },
     }),

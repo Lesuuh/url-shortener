@@ -24,8 +24,10 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
+    "handlebars": "^4.7.9",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.21.0"
+    "pg": "^8.21.0",
+    "resend": "^6.24.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
