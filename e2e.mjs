@@ -284,16 +284,19 @@ try {
   await page.goto(APP + "/app/settings", { waitUntil: "networkidle0" });
   await waitForText(page, "main", "Danger zone", 8000);
   await clickButtonByText(page, "main", "Delete account");
-  await sleep(200);
+  await sleep(250);
   const confirmShown = await page.evaluate(() =>
-    [...document.querySelectorAll("main p[role='alert']")].some(
-      (p) => p.textContent.trim().includes("Click again"),
+    [...document.querySelectorAll("button")].some(
+      (b) => b.textContent.trim() === "Yes, delete account",
     ),
   );
   if (!confirmShown) {
-    throw new Error("Danger zone did not show confirm step");
+    throw new Error("Danger zone did not show confirm dialog");
   }
   log("PASS danger zone asks for confirmation");
+  // Keep the session for the sign-out check below — dismiss the dialog.
+  await clickButtonByText(page, "main", "Cancel");
+  await sleep(200);
 
   /* ---------- Sign out → back to the sign-in page ---------- */
   await click(page, 'button[aria-label^="Account menu"]');

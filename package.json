@@ -1,0 +1,21 @@
+{
+  "name": "knot",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": ["backend", "packages/shared", "frontend-landing", "frontend-app"],
+  "scripts": {
+    "dev:backend": "npm run dev -w backend",
+    "dev:landing": "npm run dev -w @knot/frontend-landing",
+    "dev:app": "npm run dev -w @knot/frontend-app",
+    "build": "npm run build -w @knot/frontend-landing && npm run build -w @knot/frontend-app",
+    "build:landing": "npm run build -w @knot/frontend-landing",
+    "build:app": "npm run build -w @knot/frontend-app",
+    "typecheck": "npm run typecheck -w @knot/frontend-landing && npm run typecheck -w @knot/frontend-app",
+    "e2e": "node e2e.mjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.6.0"
+  }
+}
+

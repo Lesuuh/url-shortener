@@ -1,0 +1,33 @@
+{
+  "name": "@knot/frontend-app",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "screenshots": "node scripts/screenshot-app.mjs"
+  },
+  "dependencies": {
+    "@knot/shared": "1.0.0",
+    "@fontsource-variable/inter": "^5.2.6",
+    "@fontsource-variable/space-grotesk": "^5.3.0",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.18.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.7",
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.4.1",
+    "puppeteer-core": "^25.6.0",
+    "tailwindcss": "^4.1.7",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
+  }
+}

@@ -1,5 +1,3 @@
-export { shortUrl } from "../config";
-
 const dateFormat = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "short",

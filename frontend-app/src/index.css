@@ -1,4 +1,4 @@
 /* App entry styles. Tokens carry the whole system (fonts, colors,
    component classes, animations). Keep this thin on purpose. */
 @import "tailwindcss";
-@import "./tokens.css";
+@import "../../packages/shared/src/tokens.css";

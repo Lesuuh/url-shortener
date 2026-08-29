@@ -1,13 +1,13 @@
 /* ============================================================
    Knot — marketing site entry styles
    Used only by index.html and features.html.
-   `@import "tailwindcss"` + tokens.css give us the full token
+   `@import "tailwindcss"` + shared tokens give us the full token
    system; @source below guarantees the static HTML files are
    scanned for utility classes during the build.
    ============================================================ */
 
 @import "tailwindcss";
-@import "./tokens.css";
+@import "../../packages/shared/src/tokens.css";
 
 @source "../index.html";
 @source "../features.html";

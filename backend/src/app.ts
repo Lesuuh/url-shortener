@@ -37,20 +37,29 @@ app.get("/api", (req, res) => {
     );
 });
 
-/* ---------- Frontend (built marketing site + app) ----------
-   Served from ../../frontend/dist relative to this file, which resolves to
-   <repo>/frontend/dist in both source (src/) and compiled (dist/) layouts.
+/* ---------- Frontend (monorepo: landing site + app) ----------
+   The repo is an npm-workspace monorepo. Two frontends build independently:
+     <repo>/frontend-landing/dist — marketing site, served at /
+     <repo>/frontend-app/dist     — authenticated React app, served at /app/*
    Enable with SERVE_FRONTEND=true or NODE_ENV=production; silently skipped
-   when the build output is absent (e.g. running only the API). */
-const FRONTEND_DIST = path.resolve(import.meta.dirname, "../../frontend/dist");
+   when either build output is absent (e.g. running only the API). */
+const LANDING_DIST = path.resolve(import.meta.dirname, "../../frontend-landing/dist");
+const APP_DIST = path.resolve(import.meta.dirname, "../../frontend-app/dist");
 const HAS_FRONTEND =
   process.env.SERVE_FRONTEND === "true" ||
-  (process.env.NODE_ENV === "production" && fs.existsSync(FRONTEND_DIST));
-const FRONTEND_READY = HAS_FRONTEND && fs.existsSync(FRONTEND_DIST);
+  (process.env.NODE_ENV === "production" &&
+    fs.existsSync(LANDING_DIST) &&
+    fs.existsSync(APP_DIST));
+const FRONTEND_READY = HAS_FRONTEND && fs.existsSync(LANDING_DIST);
 
-if (!FRONTEND_READY && HAS_FRONTEND) {
+if (HAS_FRONTEND && !fs.existsSync(LANDING_DIST)) {
   console.warn(
-    `[frontend] ${FRONTEND_DIST} not found — build the frontend (cd frontend && npm run build) before enabling SERVE_FRONTEND.`,
+    `[frontend] ${LANDING_DIST} not found — build it (npm run build:landing) before enabling SERVE_FRONTEND.`,
+  );
+}
+if (HAS_FRONTEND && !fs.existsSync(APP_DIST)) {
+  console.warn(
+    `[frontend] ${APP_DIST} not found — build it (npm run build:app) before enabling SERVE_FRONTEND.`,
   );
 }
 
@@ -59,34 +68,43 @@ app.get("/404", (req, res) => {
   if (!FRONTEND_READY) {
     return res.status(404).send("404 — page not found");
   }
-  res.status(404).sendFile(path.join(FRONTEND_DIST, "404.html"));
+  res.status(404).sendFile(path.join(LANDING_DIST, "404.html"));
 });
 
 if (FRONTEND_READY) {
-  // Hashed build assets are immutable and can be cached aggressively.
+  // Landing site first: hashed assets (immutable, cache aggressively), then
+  // everything else — html pages, fonts, images, robots/sitemap/llms.txt.
   app.use(
     "/assets",
-    express.static(path.join(FRONTEND_DIST, "assets"), {
+    express.static(path.join(LANDING_DIST, "assets"), {
       immutable: true,
       maxAge: "1y",
     }),
   );
-
-  // Everything else: html pages, fonts, images, robots/sitemap/llms.txt.
   app.use(
-    express.static(FRONTEND_DIST, {
+    express.static(LANDING_DIST, {
       extensions: ["html"],
       index: "index.html",
     }),
   );
 
-  // The app is a client-side SPA under /app — any sub-path falls back to it.
-  app.get("/app", (req, res) =>
-    res.sendFile(path.join(FRONTEND_DIST, "app.html")),
-  );
-  app.get("/app/*splat", (req, res) =>
-    res.sendFile(path.join(FRONTEND_DIST, "app.html")),
-  );
+  // The app builds with base "/app/", so its hashed assets live under
+  // /app/assets; the SPA shell then falls back to app.html for any sub-path.
+  if (fs.existsSync(APP_DIST)) {
+    app.use(
+      "/app/assets",
+      express.static(path.join(APP_DIST, "assets"), {
+        immutable: true,
+        maxAge: "1y",
+      }),
+    );
+    app.get("/app", (req, res) =>
+      res.sendFile(path.join(APP_DIST, "app.html")),
+    );
+    app.get("/app/*splat", (req, res) =>
+      res.sendFile(path.join(APP_DIST, "app.html")),
+    );
+  }
 }
 
 // Redirect for short codes — after static so files like /robots.txt win.
@@ -98,7 +116,7 @@ app.all("*path", (req, res) => {
   }
 
   if (FRONTEND_READY) {
-    return res.status(404).sendFile(path.join(FRONTEND_DIST, "404.html"));
+    return res.status(404).sendFile(path.join(LANDING_DIST, "404.html"));
   }
 
   return res.status(404).send(`

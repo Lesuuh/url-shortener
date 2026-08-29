@@ -1,12 +1,13 @@
 /* ============================================================
    Knot — design tokens
    Semantic tokens map to values that flip via .dark on <html>.
-   Shared by the marketing site (marketing.css) and the app
-   (index.css). Both entries `@import "tailwindcss"` first,
+   Shared by the marketing site (frontend-landing) and the app
+   (frontend-app). Both entries `@import "tailwindcss"` first,
    then this file, so `@theme` here extends Tailwind's theme.
    ============================================================ */
 
-/* Self-hosted fonts — latin subset only, copied into public/fonts */
+/* Self-hosted fonts — latin subset only. Each frontend serves a
+   copy in its own public/fonts so the URLs resolve in dev too. */
 @font-face {
   font-family: "Inter Variable";
   font-style: normal;
