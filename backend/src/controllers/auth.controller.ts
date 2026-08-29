@@ -11,6 +11,7 @@ const {
   updateProfile,
   changePassword,
   forgotPassword,
+  resetPassword
 } = new AuthService();
 
 export async function LoginController(req: Request, res: Response) {
@@ -230,6 +231,21 @@ export const ForgotPasswordController = async (req: Request, res: Response) => {
 };
 
 export async function PasswordResetController(req: Request, res: Response) {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "Token and new password are required" });
+  }
+
+  if (newPassword.length < 6) {
+    return res
+      .status(400)
+      .json({ message: "New password must be at least 6 characters long" });
+  }
+
+  await resetPassword(token, newPassword);
   // Implement logic to reset the user's password
   res.json({ message: "Password reset functionality is not implemented yet" });
 }

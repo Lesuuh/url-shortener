@@ -208,4 +208,26 @@ export class AuthService {
       baseUrl,
     );
   };
+
+  resetPassword = async (token: string, newPassword: string) => {
+
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    const resetTokenRecord = await prisma.passwordResetToken.findFirst({
+      where: {
+        token_hash: hashedToken,
+        used_at: null,
+        expires_at: {
+          gt: new Date(),
+        },
+      },
+    });
+
+
+    const hashNewPassword = await bcrypt.hash(newPassword, 10);
+
+  };
 }

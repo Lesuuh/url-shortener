@@ -10,6 +10,12 @@ const sharedSrc = fileURLToPath(
   new URL("../packages/shared/src", import.meta.url),
 );
 
+/** Dep pre-bundle cache, pinned inside the hoisted root node_modules so Vite
+    doesn't manufacture a per-workspace node_modules/.vite for this package. */
+const cacheDir = fileURLToPath(
+  new URL("../node_modules/.vite/marketing", import.meta.url),
+);
+
 /**
  * Replaces __SITE_URL__ / __OG_IMAGE__ placeholders in the static HTML heads.
  * Defaults to the canonical brand domain (knot.to) unless overridden with
@@ -28,36 +34,37 @@ function injectSiteEnv(): Plugin {
 }
 
 export default defineConfig({
-    plugins: [react(), tailwindcss(), injectSiteEnv()],
-    resolve: {
-      alias: {
-        "@knot/shared": sharedSrc,
+  cacheDir,
+  plugins: [react(), tailwindcss(), injectSiteEnv()],
+  resolve: {
+    alias: {
+      "@knot/shared": sharedSrc,
+    },
+  },
+  server: {
+    port: 5174,
+    proxy: {
+      "/api": {
+        target: backendTarget,
+        changeOrigin: true,
       },
     },
-    server: {
-      port: 5174,
-      proxy: {
-        "/api": {
-          target: backendTarget,
-          changeOrigin: true,
-        },
+  },
+  preview: {
+    port: 4174,
+    proxy: {
+      "/api": {
+        target: backendTarget,
+        changeOrigin: true,
       },
     },
-    preview: {
-      port: 4174,
-      proxy: {
-        "/api": {
-          target: backendTarget,
-          changeOrigin: true,
-        },
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        index: fileURLToPath(new URL("./index.html", import.meta.url)),
+        features: fileURLToPath(new URL("./features.html", import.meta.url)),
       },
     },
-    build: {
-      rollupOptions: {
-        input: {
-          index: fileURLToPath(new URL("./index.html", import.meta.url)),
-          features: fileURLToPath(new URL("./features.html", import.meta.url)),
-        },
-      },
-    },
-  });
+  },
+});
