@@ -1,9 +1,9 @@
 /* ============================================================
    Knot — marketing site entry styles
-   Used only by index.html and features.html.
+   Imported by src/main.tsx (the React entry) for both pages.
    `@import "tailwindcss"` + shared tokens give us the full token
-   system; @source below guarantees the static HTML files are
-   scanned for utility classes during the build.
+   system; @source below keeps the public files scanned for
+   utility classes during the build.
    ============================================================ */
 
 @import "tailwindcss";
@@ -12,7 +12,8 @@
 @source "../index.html";
 @source "../features.html";
 @source "../public/404.html";
-@source "./marketing";
+@source "./components";
+@source "./pages";
 
 @layer components {
   .eyebrow {

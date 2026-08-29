@@ -1,13 +1,9 @@
-import { useRef, useState } from "react";
-import { createRoot } from "react-dom/client";
+import { useRef, useState, type FormEvent } from "react";
 import { API_BASE, APP_URL, shortUrl } from "../config";
 import { isValidUrl, normalizeUrl } from "../lib/format";
+import { CheckIcon, CopyIcon, LinkIcon } from "./icons";
 
-export function mountHeroDemo(el: HTMLElement) {
-  createRoot(el).render(<HeroDemo />);
-}
-
-function HeroDemo() {
+export function HeroDemo() {
   const [url, setUrl] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -15,7 +11,7 @@ function HeroDemo() {
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | null>(null);
 
-  async function submit(e: React.FormEvent) {
+  async function submit(e: FormEvent) {
     e.preventDefault();
     const clean = normalizeUrl(url);
     if (!clean || !isValidUrl(clean)) {
@@ -71,21 +67,11 @@ function HeroDemo() {
         className="card flex items-center gap-2 p-2 shadow-sm"
       >
         <div className="relative min-w-0 flex-1">
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
+          <LinkIcon
+            width={15}
+            height={15}
             className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-mute"
-          >
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-          </svg>
+          />
           <input
             type="text"
             inputMode="url"
@@ -140,13 +126,14 @@ function HeroDemo() {
               >
                 {copied ? (
                   <>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
+                    <CheckIcon width={14} height={14} />
                     Copied
                   </>
                 ) : (
-                  "Copy"
+                  <>
+                    <CopyIcon width={14} height={14} />
+                    Copy
+                  </>
                 )}
               </button>
               <a

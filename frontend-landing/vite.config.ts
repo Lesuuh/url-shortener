@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig, loadEnv, type Plugin } from "vite";
+import { defineConfig, type Plugin } from "vite";
 
 const backendTarget = process.env.VITE_BACKEND_TARGET || "http://localhost:5000";
 
@@ -11,29 +11,24 @@ const sharedSrc = fileURLToPath(
 );
 
 /**
- * Replaces __SITE_URL__ / __OG_IMAGE__ / __APP_URL__ placeholders in static
- * HTML. Defaults to the canonical brand domain (knot.to) and the same-origin
- * /app unless overridden with VITE_SITE_URL / VITE_APP_URL.
+ * Replaces __SITE_URL__ / __OG_IMAGE__ placeholders in the static HTML heads.
+ * Defaults to the canonical brand domain (knot.to) unless overridden with
+ * VITE_SITE_URL. The app URL is resolved by React via src/config.ts instead.
  */
-function injectSiteEnv(appUrl: string): Plugin {
+function injectSiteEnv(): Plugin {
   const site = (process.env.VITE_SITE_URL || "https://knot.to").replace(/\/+$/, "");
   return {
     name: "knot-inject-site-env",
     transformIndexHtml(html) {
       return html
         .replaceAll("__SITE_URL__", site)
-        .replaceAll("__OG_IMAGE__", `${site}/og.png`)
-        .replaceAll("__APP_URL__", appUrl);
+        .replaceAll("__OG_IMAGE__", `${site}/og.png`);
     },
   };
 }
 
-export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "");
-  const appUrl = (env.VITE_APP_URL || "/app").replace(/\/+$/, "");
-
-  return {
-    plugins: [react(), tailwindcss(), injectSiteEnv(appUrl)],
+export default defineConfig({
+    plugins: [react(), tailwindcss(), injectSiteEnv()],
     resolve: {
       alias: {
         "@knot/shared": sharedSrc,
@@ -65,5 +60,4 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-  };
-});
+  });
