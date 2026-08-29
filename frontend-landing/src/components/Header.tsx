@@ -5,10 +5,9 @@ import { useTheme } from "../theme";
 import { BrandMark } from "./BrandMark";
 import { MenuIcon, MoonIcon, SunIcon } from "./icons";
 
-const NAV = [
-  { key: "how", label: "How it works", hash: "#how" },
-  { key: "features", label: "Features", hash: "#features" },
-  { key: "app", label: "The app", hash: "#app" },
+const LINKS = [
+  { key: "how", label: "How it works", to: "/how-it-works" },
+  { key: "features", label: "Features", to: "/features" },
 ];
 
 export function Header() {
@@ -17,7 +16,7 @@ export function Header() {
   const isFeatures = pathname === "/features";
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const to = (hash: string) => (isFeatures ? `/${hash}` : hash);
+  const isActive = (to: string) => pathname === to;
 
   const dark = theme === "dark";
 
@@ -27,18 +26,23 @@ export function Header() {
         <BrandMark />
 
         <div className="hidden items-center gap-7 text-[13px] font-medium text-ink-soft md:flex">
-          {NAV.map((item) => (
+          {LINKS.map((item) => (
             <Link
               key={item.key}
-              to={to(item.hash)}
-              className={item.key === "features" && isFeatures
-                ? "font-semibold text-ink"
-                : "transition hover:text-ink"}
-              aria-current={item.key === "features" && isFeatures ? "page" : undefined}
+              to={item.to}
+              className={
+                isActive(item.to)
+                  ? "font-semibold text-ink"
+                  : "transition hover:text-ink"
+              }
+              aria-current={isActive(item.to) ? "page" : undefined}
             >
               {item.label}
             </Link>
           ))}
+          <a href={APP_URL} className="transition hover:text-ink">
+            The app
+          </a>
         </div>
 
         <div className="flex items-center gap-2">
@@ -75,13 +79,13 @@ export function Header() {
 
       {menuOpen && (
         <div className="border-t border-line bg-page px-4 py-3 md:hidden">
-          {NAV.map((item) => (
+          {LINKS.map((item) => (
             <Link
               key={item.key}
-              to={to(item.hash)}
+              to={item.to}
               onClick={() => setMenuOpen(false)}
               className={
-                item.key === "features" && isFeatures
+                isActive(item.to)
                   ? "block rounded-md px-2 py-2 text-sm font-medium text-ink hover:bg-surface-2"
                   : "block rounded-md px-2 py-2 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink"
               }
@@ -89,6 +93,13 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <a
+            href={APP_URL}
+            onClick={() => setMenuOpen(false)}
+            className="block rounded-md px-2 py-2 text-sm font-medium text-ink-soft hover:bg-surface-2 hover:text-ink"
+          >
+            The app
+          </a>
           <Link to={APP_URL} className="btn-primary mt-2 w-full">
             Open app
           </Link>

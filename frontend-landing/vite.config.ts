@@ -64,6 +64,9 @@ export default defineConfig({
       input: {
         index: fileURLToPath(new URL("./index.html", import.meta.url)),
         features: fileURLToPath(new URL("./features.html", import.meta.url)),
+        "how-it-works": fileURLToPath(
+          new URL("./how-it-works.html", import.meta.url),
+        ),
       },
     },
   },

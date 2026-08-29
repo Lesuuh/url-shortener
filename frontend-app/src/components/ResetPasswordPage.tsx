@@ -17,7 +17,10 @@ export function ResetPasswordPage() {
       footer={
         <p className="text-xs text-ink-mute">
           Need a fresh link?{" "}
-          <Link to="/forgot-password" className="font-semibold text-ink-soft underline-offset-2 hover:text-ink hover:underline">
+          <Link
+            to="/forgot-password"
+            className="font-semibold text-ink-soft underline-offset-2 hover:text-ink hover:underline"
+          >
             Request one
           </Link>
         </p>
@@ -30,11 +33,14 @@ export function ResetPasswordPage() {
         >
           <AlertIcon width={15} height={15} className="mt-0.5 shrink-0" />
           <span>
-            The reset link was incomplete. Open the exact link from your email, or
-            request a new one.
+            The reset link was incomplete. Open the exact link from your email,
+            or request a new one.
           </span>
         </div>
-        <Link to="/forgot-password" className="btn-ghost flex h-10 w-full items-center justify-center">
+        <Link
+          to="/forgot-password"
+          className="btn-ghost flex h-10 w-full items-center justify-center"
+        >
           Request a new link
         </Link>
       </div>
@@ -43,19 +49,21 @@ export function ResetPasswordPage() {
 }
 
 function ResetForm({ token }: { token: string }) {
-  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  console.log(newPassword);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (password.length < 8) {
-      setError("New password must be at least 8 characters long.");
+    if (newPassword.length < 6) {
+      setError("New password must be at least 6 characters long.");
       return;
     }
-    if (password !== confirm) {
+    if (newPassword !== confirm) {
       setError("Passwords don't match.");
       return;
     }
@@ -63,7 +71,7 @@ function ResetForm({ token }: { token: string }) {
     setSubmitting(true);
     setError(null);
     try {
-      await api.resetPassword(token, password);
+      await api.resetPassword(token, newPassword);
       setDone(true);
     } catch (err) {
       setError(
@@ -89,7 +97,10 @@ function ResetForm({ token }: { token: string }) {
               Your password has been changed and other sessions were signed out.
             </span>
           </div>
-          <Link to="/login" className="btn-primary flex h-10 w-full items-center justify-center">
+          <Link
+            to="/login"
+            className="btn-primary flex h-10 w-full items-center justify-center"
+          >
             Sign in
           </Link>
         </div>
@@ -104,13 +115,20 @@ function ResetForm({ token }: { token: string }) {
       footer={
         <p className="text-xs text-ink-mute">
           Changed your mind?{" "}
-          <Link to="/login" className="font-semibold text-ink-soft underline-offset-2 hover:text-ink hover:underline">
+          <Link
+            to="/login"
+            className="font-semibold text-ink-soft underline-offset-2 hover:text-ink hover:underline"
+          >
             Back to sign in
           </Link>
         </p>
       }
     >
-      <form onSubmit={(e) => void handleSubmit(e)} noValidate className="space-y-4">
+      <form
+        onSubmit={(e) => void handleSubmit(e)}
+        noValidate
+        className="space-y-4"
+      >
         <div>
           <label htmlFor="reset-password" className="label">
             New password
@@ -120,12 +138,12 @@ function ResetForm({ token }: { token: string }) {
             type="password"
             autoComplete="new-password"
             autoFocus
-            minLength={8}
+            minLength={6}
             className={`field h-10 ${error ? "border-danger/50 focus:border-danger focus:ring-danger/30" : ""}`}
-            placeholder="At least 8 characters"
-            value={password}
+            placeholder="At least 6 characters"
+            value={newPassword}
             onChange={(e) => {
-              setPassword(e.target.value);
+              setNewPassword(e.target.value);
               setError(null);
             }}
           />
@@ -158,7 +176,11 @@ function ResetForm({ token }: { token: string }) {
           </div>
         )}
 
-        <button type="submit" disabled={submitting} className="btn-primary h-10 w-full">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="btn-primary h-10 w-full"
+        >
           {submitting && <SpinnerIcon width={15} height={15} />}
           Update password
         </button>

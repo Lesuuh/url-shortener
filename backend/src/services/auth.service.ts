@@ -210,11 +210,7 @@ export class AuthService {
   };
 
   resetPassword = async (token: string, newPassword: string) => {
-
-    const hashedToken = crypto
-      .createHash("sha256")
-      .update(token)
-      .digest("hex");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
     const resetTokenRecord = await prisma.passwordResetToken.findFirst({
       where: {
@@ -226,8 +222,27 @@ export class AuthService {
       },
     });
 
+    if (!resetTokenRecord) {
+      throw new Error("Invalid or expired password reset token");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: resetTokenRecord.user_id },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
 
     const hashNewPassword = await bcrypt.hash(newPassword, 10);
 
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password_hash: hashNewPassword },
+    });
+
+    await prisma.passwordResetToken.delete({
+      where: { id: resetTokenRecord.id },
+    });
   };
 }

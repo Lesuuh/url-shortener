@@ -1,4 +1,4 @@
-import { type Request, type Response } from "express";
+import { response, type Request, type Response } from "express";
 import { AuthService } from "src/services/auth.service";
 import { clearAuthCookie, setAuthCookie } from "src/utils/authCookie";
 import jwt from "jsonwebtoken";
@@ -11,7 +11,7 @@ const {
   updateProfile,
   changePassword,
   forgotPassword,
-  resetPassword
+  resetPassword,
 } = new AuthService();
 
 export async function LoginController(req: Request, res: Response) {
@@ -245,7 +245,16 @@ export async function PasswordResetController(req: Request, res: Response) {
       .json({ message: "New password must be at least 6 characters long" });
   }
 
-  await resetPassword(token, newPassword);
-  // Implement logic to reset the user's password
-  res.json({ message: "Password reset functionality is not implemented yet" });
+  try {
+    await resetPassword(token, newPassword);
+    res.status(200).json({
+      message: "Password reset successfully, you can go ahead and log in",
+    });
+  } catch (error) {
+    console.error("Password reset error:", error);
+
+    return res.status(500).json({
+      message: "Failed to reset password. Please try again.",
+    });
+  }
 }

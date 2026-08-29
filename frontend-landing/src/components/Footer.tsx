@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router";
+import { Link } from "react-router";
 import type { ReactNode } from "react";
 import { APP_URL } from "../config";
 import { BrandMark } from "./BrandMark";
@@ -29,13 +29,9 @@ function FooterLink({
 }
 
 export function Footer() {
-  const { pathname } = useLocation();
-  const isFeatures = pathname === "/features";
-  const to = (hash: string) => (isFeatures ? `/${hash}` : hash);
-
   return (
     <footer className="border-t border-line">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <BrandMark />
           <p className="mt-3 max-w-xs text-[13px] leading-relaxed text-ink-mute">
@@ -45,21 +41,10 @@ export function Footer() {
         </div>
 
         <FooterCol title="Product">
-          <FooterLink to={to("#how")}>How it works</FooterLink>
+          <FooterLink to="/how-it-works">How it works</FooterLink>
           <FooterLink to="/features">Features</FooterLink>
-          <FooterLink to={to("#app")}>The app</FooterLink>
+          <FooterLink to={APP_URL}>The app</FooterLink>
           <FooterLink to={APP_URL}>Open app</FooterLink>
-        </FooterCol>
-
-        <FooterCol title="Resources">
-          <FooterLink to="/llms.txt">For AI agents — llms.txt</FooterLink>
-          <FooterLink to="/sitemap.xml">Sitemap</FooterLink>
-          <FooterLink to="/404">A friendly 404</FooterLink>
-        </FooterCol>
-
-        <FooterCol title="Status">
-          <FooterLink to="/api/links/health">API health</FooterLink>
-          <FooterLink to="/api">API root</FooterLink>
         </FooterCol>
       </div>
 

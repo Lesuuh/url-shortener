@@ -102,9 +102,9 @@ export const api = {
     }),
 
   resetPassword: (token: string, newPassword: string) =>
-    request<{ message: string }>("/reset-password", {
+    request<{ message: string }>("/auth/reset-password", {
       method: "POST",
-      body: { token, new_password: newPassword },
+      body: { token, newPassword: newPassword },
     }),
 
   logout: () =>

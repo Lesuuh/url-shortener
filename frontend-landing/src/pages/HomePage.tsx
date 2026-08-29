@@ -1,11 +1,15 @@
 import { Link } from "react-router";
-import type { ReactNode } from "react";
 import { APP_URL } from "../config";
 import { FeatureCard, type Feature } from "../components/FeatureCard";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { HeroDemo } from "../components/HeroDemo";
 import { HeroExample } from "../components/HeroExample";
+import { ProofStrip } from "../components/ProofStrip";
+import { Testimonials } from "../components/Testimonials";
+import { PricingTable } from "../components/PricingTable";
+import { Faq } from "../components/Faq";
+import { SectionHead } from "../components/SectionHead";
 import {
   BoltIcon,
   ClockIcon,
@@ -72,28 +76,6 @@ const FEATURES: Feature[] = [
   },
 ];
 
-function SectionHead({
-  eyebrow,
-  title,
-  children,
-}: {
-  eyebrow: string;
-  title: string;
-  children?: ReactNode;
-}) {
-  return (
-    <div className="section-head">
-      <span className="eyebrow">{eyebrow}</span>
-      <h2 className="display mt-4 text-balance text-3xl sm:text-4xl">{title}</h2>
-      {children && (
-        <p className="mx-auto mt-4 max-w-lg text-[15px] leading-relaxed text-ink-soft">
-          {children}
-        </p>
-      )}
-    </div>
-  );
-}
-
 export function HomePage() {
   return (
     <div className="bg-page font-sans text-ink antialiased">
@@ -130,6 +112,29 @@ export function HomePage() {
             </div>
 
             <HeroExample />
+          </div>
+        </section>
+
+        <ProofStrip />
+
+        {/* Why */}
+        <section className="py-14 sm:py-16">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6">
+            <div className="card border-accent-soft bg-accent-soft/50 px-6 py-12 text-center sm:px-12 sm:py-16">
+              <span className="eyebrow">Why it matters</span>
+              <h2 className="display mx-auto mt-4 max-w-2xl text-balance text-2xl sm:text-3xl">
+                Long URLs are noise.{" "}
+                <span className="text-accent-strong">
+                  Your short link is a decision.
+                </span>
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-ink-soft">
+                Query strings bury where someone is actually going. Knot gives
+                you a link you can read, type, and trust — one that expires
+                before it turns stale, and never sends your visitors through a
+                tracker.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -212,6 +217,10 @@ export function HomePage() {
             </div>
           </div>
         </section>
+
+        <Testimonials />
+        <PricingTable />
+        <Faq />
 
         {/* CTA */}
         <section className="pb-24">
