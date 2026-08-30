@@ -2,6 +2,7 @@ import { response, type Request, type Response } from "express";
 import { AuthService } from "src/services/auth.service";
 import { clearAuthCookie, setAuthCookie } from "src/utils/authCookie";
 import jwt from "jsonwebtoken";
+import { sendRegistrationEmail } from "src/utils/registerEmail";
 
 const {
   login,
@@ -64,6 +65,8 @@ export async function RegisterController(req: Request, res: Response) {
     const { token, user } = await register(name, email, password);
 
     setAuthCookie(res, token);
+
+    await sendRegistrationEmail(email, name);
 
     return res
       .status(201)
