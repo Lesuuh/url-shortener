@@ -20,7 +20,7 @@ export async function sendPasswordResetEmail(
 
   try {
     const data = await resend.emails.send({
-      from: "Lesuuh <onboarding@resend.dev>",
+      from: "Lesuuh from Knot <onboarding@resend.dev>",
       to: [email],
       subject: "Password Reset",
       html: htmlString,

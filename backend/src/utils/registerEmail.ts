@@ -13,7 +13,7 @@ export async function sendRegistrationEmail(
     });
 
     const { data, error } = await resend.emails.send({
-      from: "Knot <onboarding@resend.dev>",
+      from: "Lesuuh from Knot <onboarding@resend.dev>",
       to: [email],
       subject: "Welcome to Knot — Registration Successful",
       html,
