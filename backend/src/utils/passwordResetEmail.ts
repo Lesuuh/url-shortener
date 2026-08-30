@@ -13,7 +13,7 @@ export async function sendPasswordResetEmail(
 
   console.log("Reset link:", resetLink);
 
-  const htmlString = await compileEmailTemplate("reset-password-email", {
+  const htmlString = await compileEmailTemplate("password-reset-email", {
     userName: name,
     resetLink: resetLink,
   });
@@ -22,7 +22,7 @@ export async function sendPasswordResetEmail(
     const data = await resend.emails.send({
       from: "Lesuuh from Knot <onboarding@resend.dev>",
       to: [email],
-      subject: "Password Reset",
+      subject: "Reset your Knot password",
       html: htmlString,
     });
 

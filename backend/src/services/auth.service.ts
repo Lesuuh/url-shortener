@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import type { User } from "src/generated/prisma/client";
 import crypto from "node:crypto";
 import { sendPasswordResetEmail } from "src/utils/passwordResetEmail";
+import { sendPasswordChangedEmail } from "src/utils/passwordChangedEmail";
 
 interface AuthResult {
   token: string;
@@ -156,6 +157,8 @@ export class AuthService {
       where: { id: user_id },
       data: { password_hash: hashNewPassword },
     });
+
+    await sendPasswordChangedEmail(user.email, user.name || "there");
   }
 
   forgotPassword = async (email: string, baseUrl: string): Promise<void> => {
@@ -244,5 +247,7 @@ export class AuthService {
     await prisma.passwordResetToken.delete({
       where: { id: resetTokenRecord.id },
     });
+
+    await sendPasswordChangedEmail(user.email, user.name || "there");
   };
 }
