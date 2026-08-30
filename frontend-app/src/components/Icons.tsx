@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import type { ImgHTMLAttributes, SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
@@ -23,6 +23,23 @@ export function LogoMark(props: IconProps) {
       <path d="M9.5 14.5 8 16a3 3 0 1 1-4.24-4.24L7 8.5a3 3 0 0 1 4.24 0" />
       <path d="M14.5 9.5 16 8a3 3 0 1 1 4.24 4.24L17 15.5a3 3 0 0 1-4.24 0" />
     </svg>
+  );
+}
+
+/** The Knot brand mark (transparent PNG) in place of the vector glyph. */
+export function LogoImage({
+  className,
+  ...rest
+}: ImgHTMLAttributes<HTMLImageElement>) {
+  return (
+    <img
+      src={import.meta.env.BASE_URL + "logo.png"}
+      alt=""
+      aria-hidden
+      draggable={false}
+      className={`logo-img ${className ?? ""}`.trim()}
+      {...rest}
+    />
   );
 }
 

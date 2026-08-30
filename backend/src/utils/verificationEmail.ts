@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import compileEmailTemplate from "./compileEmailTemplate";
+import { emailLogoAttachments } from "./emailLogo";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -23,6 +24,7 @@ export async function sendVerificationEmail(
       to: [email],
       subject: "Confirm your Knot email",
       html,
+      attachments: emailLogoAttachments(),
     });
 
     if (error) {

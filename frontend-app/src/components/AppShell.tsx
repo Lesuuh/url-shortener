@@ -7,7 +7,7 @@ import {
   ChevronDownIcon,
   GearIcon,
   HistoryIcon,
-  LogoMark,
+  LogoImage,
   LogOutIcon,
   MenuIcon,
   MoonIcon,
@@ -32,9 +32,7 @@ interface NavFooterProps {
 function Mark() {
   return (
     <a href="/" className="mark" aria-label="Knot home">
-      <span className="mark-mark">
-        <LogoMark width={14} height={14} />
-      </span>
+      <LogoImage className="h-7 w-7" />
       knot
     </a>
   );

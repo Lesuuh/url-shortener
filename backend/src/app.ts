@@ -98,6 +98,10 @@ if (FRONTEND_READY) {
         maxAge: "1y",
       }),
     );
+    // Serves the app's own public assets (/app/logo.png, /app/favicon.png,
+    // /app/apple-touch-icon.png) and the shell for /app itself; SPA routes
+    // without a file fall through to the splat route below.
+    app.use("/app", express.static(APP_DIST, { index: "app.html" }));
     app.get("/app", (req, res) =>
       res.sendFile(path.join(APP_DIST, "app.html")),
     );

@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import compileEmailTemplate from "./compileEmailTemplate";
+import { emailLogoAttachments } from "./emailLogo";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -24,6 +25,7 @@ export async function sendPasswordResetEmail(
       to: [email],
       subject: "Reset your Knot password",
       html: htmlString,
+      attachments: emailLogoAttachments(),
     });
 
     console.log("Email sent successfully:", data);

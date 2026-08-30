@@ -1,5 +1,4 @@
 import { Link } from "react-router";
-import { BrandGlyph } from "./icons";
 
 export function BrandMark({
   to = "/",
@@ -10,9 +9,13 @@ export function BrandMark({
 }) {
   return (
     <Link to={to} className="mark" aria-label={label}>
-      <span className="mark-mark">
-        <BrandGlyph />
-      </span>
+      <img
+        src="/logo.png"
+        alt=""
+        aria-hidden
+        draggable={false}
+        className="logo-img h-7 w-7"
+      />
       knot
     </Link>
   );

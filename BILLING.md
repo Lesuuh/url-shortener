@@ -58,7 +58,7 @@ PRO_DURATION_MONTHS=3
 npx prisma migrate dev --name add_billing
 ```
 
-  This also regenerates the client into `src/generated/prisma`. Verify you can `import prisma` and see `payment` in the client.
+This also regenerates the client into `src/generated/prisma`. Verify you can `import prisma` and see `payment` in the client.
 
 ---
 
@@ -92,7 +92,7 @@ app.use(
 );
 ```
 
-  Webhook handler then signs `req.rawBody`. (In dev, Paystack can't reach `localhost` — the callback-verify path is your primary flow; webhook is for production.)
+Webhook handler then signs `req.rawBody`. (In dev, Paystack can't reach `localhost` — the callback-verify path is your primary flow; webhook is for production.)
 
 ---
 

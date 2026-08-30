@@ -193,6 +193,21 @@
   }
 }
 
+/* Brand logo mark (transparent PNG) — artwork is vine green (#0e7a5b) so it
+   sits on light surfaces as-is; in dark mode a filter chain remaps the green
+   to the dark accent (#2fbf92) so it stays readable on dark surfaces. */
+.logo-img {
+  display: inline-block;
+  max-width: none;
+  flex-shrink: 0;
+  object-fit: contain;
+  user-select: none;
+}
+html.dark .logo-img {
+  filter: brightness(0) saturate(100%) invert(50.4%) sepia(71.4%)
+    saturate(367%) hue-rotate(122deg) brightness(97%) contrast(107%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-rise,
   .animate-fade,

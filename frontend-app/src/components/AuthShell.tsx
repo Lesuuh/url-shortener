@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useTheme } from "../theme";
-import { LogoMark, MoonIcon, SunIcon } from "./Icons";
+import { LogoImage, MoonIcon, SunIcon } from "./Icons";
 
 interface AuthShellProps {
   title: string;
@@ -18,9 +18,7 @@ export function AuthShell({ title, subtitle, footer, children }: AuthShellProps)
     <div className="flex min-h-dvh flex-col bg-page">
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-line bg-page/80 px-4 backdrop-blur-lg sm:px-6">
         <a href="/" className="mark" aria-label="Knot home">
-          <span className="mark-mark">
-            <LogoMark width={14} height={14} />
-          </span>
+          <LogoImage className="h-7 w-7" />
           knot
         </a>
         <div className="flex items-center gap-2">
@@ -45,9 +43,7 @@ export function AuthShell({ title, subtitle, footer, children }: AuthShellProps)
       <main className="flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-[24rem] animate-rise">
           <div className="mb-6 text-center">
-            <span className="mark-mark mx-auto flex h-11 w-11">
-              <LogoMark width={20} height={20} />
-            </span>
+            <LogoImage className="mx-auto h-11 w-11" />
             <h1 className="display mt-4 text-2xl">{title}</h1>
             {subtitle ? <p className="mt-1.5 text-sm text-ink-mute">{subtitle}</p> : null}
           </div>
