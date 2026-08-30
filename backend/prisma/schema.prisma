@@ -18,16 +18,16 @@ enum UserTier {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  name          String?
-  email         String   @unique
-  password_hash String
-  tier          UserTier @default(BASIC)
-  createdAt     DateTime @default(now())
-
-  links Links[]
-
+  id                  String               @id @default(cuid())
+  name                String?
+  email               String               @unique
+  password_hash       String
+  tier                UserTier             @default(BASIC)
+  createdAt           DateTime             @default(now())
+  links               Links[]
   passwordResetTokens PasswordResetToken[]
+  payments            Payment[]
+  pro_expires_at      DateTime?
 }
 
 model Links {
@@ -51,6 +51,28 @@ model PasswordResetToken {
   createdAt  DateTime  @default(now())
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  user_id     String
+  user        User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  provider    String        @default("paystack")
+  reference   String        @unique
+  amount      Int
+  currency    String        @default("NGN")
+  status      PaymentStatus @default(PENDING)
+  periodStart DateTime?
+  periodEnd   DateTime?
+  createdAt   DateTime      @default(now())
 
   @@index([user_id])
 }
