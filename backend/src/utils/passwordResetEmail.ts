@@ -10,7 +10,7 @@ export async function sendPasswordResetEmail(
   name: string,
   base_url: string,
 ) {
-  const resetLink = `${base_url}/app/reset-password?token=${token}`;
+  const resetLink = `${base_url}/reset-password?token=${token}`;
 
   console.log("Reset link:", resetLink);
 

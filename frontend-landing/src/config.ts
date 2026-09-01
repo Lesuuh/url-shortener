@@ -7,7 +7,7 @@ export const API_BASE: string = (
 
 /** Where the app lives — used by the marketing hero demo "Open in app". */
 export const APP_URL: string = (
-  import.meta.env.VITE_APP_URL || "/app"
+  import.meta.env.VITE_APP_URL || "https://knot-links-app.vercel.app"
 ).replace(/\/+$/, "");
 
 const shortBase =

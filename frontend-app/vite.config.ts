@@ -36,11 +36,11 @@ function serveAppShell(): Plugin {
   };
 }
 
-export default defineConfig(({ command }) => ({
+export default defineConfig({
   cacheDir,
-  // Built assets live under /app/ so the backend can serve the landing site
-  // and the app independently; dev stays at / so the shell URL stays /app/*.
-  base: command === "build" ? "/app/" : "/",
+  // The app is deployed at its own origin root (Vercel), so assets are served
+  // from / and the SPA routes live at the root — no /app prefix.
+  base: "/",
   plugins: [react(), tailwindcss(), serveAppShell()],
   resolve: {
     alias: {
@@ -72,4 +72,4 @@ export default defineConfig(({ command }) => ({
       },
     },
   },
-}));
+});

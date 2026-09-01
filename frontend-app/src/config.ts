@@ -5,9 +5,9 @@ export const API_BASE: string = (
   import.meta.env.VITE_API_BASE || "/api"
 ).replace(/\/+$/, "");
 
-/** Where the app lives — used by the marketing hero demo "Open in app". */
+/** Where the app lives — used by the app shell/bookmark links. */
 export const APP_URL: string = (
-  import.meta.env.VITE_APP_URL || "/app"
+  import.meta.env.VITE_APP_URL || "/"
 ).replace(/\/+$/, "");
 
 const shortBase =

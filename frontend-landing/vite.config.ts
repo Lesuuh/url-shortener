@@ -22,7 +22,7 @@ const cacheDir = fileURLToPath(
  * VITE_SITE_URL. The app URL is resolved by React via src/config.ts instead.
  */
 function injectSiteEnv(): Plugin {
-  const site = (process.env.VITE_SITE_URL || "https://knot.to").replace(/\/+$/, "");
+  const site = (process.env.VITE_SITE_URL || "https://knot-links.vercel.app").replace(/\/+$/, "");
   return {
     name: "knot-inject-site-env",
     transformIndexHtml(html) {

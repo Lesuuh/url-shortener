@@ -9,9 +9,11 @@ import {
 } from "./middlewares/rate.limit.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import { redirectToOriginalUrlController } from "./controllers/link.controller.js";
+import { corsMiddleware } from "./middlewares/cors.middleware.js";
 
 const app = express();
 
+app.use(corsMiddleware);
 app.use(express.json());
 app.use(cookieParser());
 

@@ -1,4 +1,5 @@
 import { User } from "../types";
+import { API_BASE } from "../config";
 
 export class ApiError extends Error {
   status: number;
@@ -31,7 +32,7 @@ async function request<T>(
 
   let response: Response;
   try {
-    response = await fetch(`/api${path}`, {
+    response = await fetch(`${API_BASE}${path}`, {
       credentials: "include",
       ...rest,
       headers: {

@@ -8,7 +8,7 @@ export async function sendRegistrationEmail(
   email: string,
   name: string,
 ): Promise<void> {
-  const appUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}/app`;
+  const appUrl = `${process.env.FRONTEND_URL || "http://localhost:5173"}`;
 
   try {
     const html = await compileEmailTemplate("register-email", {

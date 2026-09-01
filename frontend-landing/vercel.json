@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/features", "destination": "/features.html" },
+    { "source": "/how-it-works", "destination": "/how-it-works.html" },
+    { "source": "/assets/:path*", "destination": "/assets/:path*" },
+    { "source": "/:path*", "destination": "/index.html" }
+  ],
+  "cleanUrls": false
+}
