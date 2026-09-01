@@ -8,7 +8,7 @@ import {
   globalRateLimit,
 } from "./middlewares/rate.limit.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
-import { redirectToOriginalUrlController } from "./controllers/link.controller";
+import { redirectToOriginalUrlController } from "./controllers/link.controller.js";
 
 const app = express();
 

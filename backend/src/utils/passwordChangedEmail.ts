@@ -1,6 +1,6 @@
 import { Resend } from "resend";
-import compileEmailTemplate from "./compileEmailTemplate";
-import { emailLogoAttachments } from "./emailLogo";
+import compileEmailTemplate from "./compileEmailTemplate.js";
+import { emailLogoAttachments } from "./emailLogo.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 

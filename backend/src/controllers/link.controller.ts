@@ -5,7 +5,7 @@ import {
   deleteLink,
   getOriginalUrlByCode,
   getUserLinks,
-} from "src/services/link.service";
+} from "../services/link.service.js";
 
 function isValidUrl(url_string: string): boolean {
   const url = new URL(url_string);

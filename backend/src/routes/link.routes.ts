@@ -3,8 +3,8 @@ import {
   createLinkController,
   deleteLinkController,
   getUserLinksController,
-} from "src/controllers/link.controller"; // 🔑 Removed redirect controller
-import requireAuth from "src/middlewares/auth.middleware";
+} from "../controllers/link.controller.js"; // 🔑 Removed redirect controller
+import requireAuth from "../middlewares/auth.middleware.js";
 
 const router = Router();
 

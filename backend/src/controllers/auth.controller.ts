@@ -1,8 +1,8 @@
 import { response, type Request, type Response } from "express";
-import { AuthService } from "src/services/auth.service";
-import { clearAuthCookie, setAuthCookie } from "src/utils/authCookie";
+import { AuthService } from "../services/auth.service.js";
+import { clearAuthCookie, setAuthCookie } from "../utils/authCookie.js";
 import jwt from "jsonwebtoken";
-import { sendRegistrationEmail } from "src/utils/registerEmail";
+import { sendRegistrationEmail } from "../utils/registerEmail.js";
 
 const {
   login,

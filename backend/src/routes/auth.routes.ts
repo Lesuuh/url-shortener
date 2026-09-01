@@ -10,8 +10,8 @@ import {
   PasswordResetController,
   RegisterController,
   updateUserController,
-} from "src/controllers/auth.controller";
-import requireAuth from "src/middlewares/auth.middleware";
+} from "../controllers/auth.controller.js";
+import requireAuth from "../middlewares/auth.middleware.js";
 
 const router = Router();
 

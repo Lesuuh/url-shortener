@@ -1,10 +1,10 @@
-import prisma from "src/config/db";
+import prisma from "../config/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import type { User } from "src/generated/prisma/client";
+import type { User } from "../generated/prisma/client";
 import crypto from "node:crypto";
-import { sendPasswordResetEmail } from "src/utils/passwordResetEmail";
-import { sendPasswordChangedEmail } from "src/utils/passwordChangedEmail";
+import { sendPasswordResetEmail } from "../utils/passwordResetEmail.js";
+import { sendPasswordChangedEmail } from "../utils/passwordChangedEmail.js";
 
 interface AuthResult {
   token: string;

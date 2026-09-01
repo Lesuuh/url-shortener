@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch --env-file=.env src/server.ts",
-    "build": "tsc",
+    "prebuild": "prisma generate",
+    "build": "tsc && node scripts/fix-imports.mjs",
     "start": "node dist/server.js"
   },
   "keywords": [],

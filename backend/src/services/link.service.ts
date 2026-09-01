@@ -1,4 +1,4 @@
-import { UserTier, type Links } from "src/generated/prisma/client.js";
+import { UserTier, type Links } from "../generated/prisma/client.js";
 import prisma from "../config/db.js";
 import { generateCode } from "../utils/generateCode.js";
 
