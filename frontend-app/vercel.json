@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/", "destination": "/app.html" },
     { "source": "/assets/:path*", "destination": "/assets/:path*" },
     { "source": "/:path*", "destination": "/app.html" }
   ],
