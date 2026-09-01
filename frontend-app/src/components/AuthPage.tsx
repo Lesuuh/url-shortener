@@ -4,6 +4,7 @@ import { api, ApiError } from "../lib/api";
 import { useTheme } from "../theme";
 import type { User } from "../types";
 import { AlertIcon, LogoImage, MoonIcon, SpinnerIcon, SunIcon } from "./Icons";
+import { SITE_URL } from "../config";
 
 type Mode = "login" | "register";
 
@@ -97,7 +98,7 @@ export function AuthPage({
   return (
     <div className="flex min-h-dvh flex-col bg-page">
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-line bg-page/80 px-4 backdrop-blur-lg sm:px-6">
-        <a href="/" className="mark" aria-label="Knot home">
+        <a href={SITE_URL} className="mark" aria-label="Knot home">
           <LogoImage className="h-7 w-7" />
           knot
         </a>
@@ -114,7 +115,7 @@ export function AuthPage({
               <MoonIcon width={16} height={16} />
             )}
           </button>
-          <a href="/" className="btn-ghost">
+          <a href={SITE_URL} className="btn-ghost">
             Back to site
           </a>
         </div>

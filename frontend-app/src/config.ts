@@ -10,6 +10,12 @@ export const APP_URL: string = (
   import.meta.env.VITE_APP_URL || "/"
 ).replace(/\/+$/, "");
 
+/** The marketing/landing site origin — where the logo and "Back to site"
+ *  links take users. Defaults to the landing deployment. */
+export const SITE_URL: string = (
+  import.meta.env.VITE_SITE_URL || "https://knot-links.vercel.app"
+).replace(/\/+$/, "");
+
 const shortBase =
   import.meta.env.VITE_SHORT_BASE ||
   (import.meta.env.DEV ? "http://localhost:5000" : window.location.origin);

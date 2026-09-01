@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { NavLink } from "react-router";
 import { useAuth } from "../context/auth";
 import { useTheme } from "../theme";
+import { SITE_URL } from "../config";
 import {
   ChevronDownIcon,
   GearIcon,
@@ -31,7 +32,7 @@ interface NavFooterProps {
 
 function Mark() {
   return (
-    <a href="/" className="mark" aria-label="Knot home">
+    <a href={SITE_URL} className="mark" aria-label="Knot home">
       <LogoImage className="h-7 w-7" />
       knot
     </a>
